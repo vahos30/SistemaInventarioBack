@@ -11,43 +11,40 @@ using SistemaInventario.Application.Feactures.Clientes;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Registrar el DbContext utilizando la cadena de conexión del appsettings.json
+//  Registrar DbContext con la cadena de conexión
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-// Registrar Repositorios
+//  Registrar Repositorios
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IReciboRepository, ReciboRepository>();
 
-// Registrar el repositorio de productos y su proxy
-builder.Services.AddScoped<IProductoRepository, ProductoRepository>(); // Repositorio real
+//  Registrar ProductoRepository con Proxy
 builder.Services.AddScoped<IProductoRepository>(provider =>
 {
-    var repoReal = provider.GetRequiredService<IProductoRepository>();
+    var repoReal = new ProductoRepository(provider.GetRequiredService<AppDbContext>());
     var logger = provider.GetRequiredService<ILogger<ProductoRepositoryProxy>>();
     return new ProductoRepositoryProxy(repoReal, logger);
 });
 
-// Registrar MediatR
+//  Registrar MediatR
 builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly);
 
+//  Registrar AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Registrar AutoMapper
-builder.Services.AddAutoMapper(new System.Type[] { typeof(MappingProfile) });
-
-
-
-// Registrar controladores 
+//  Registrar controladores
 builder.Services.AddControllers();
 
-// Configurar Swagger/OpenAPI
+//  Configurar Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Middleware de manejo de excepciones (opcional)
+//  Middleware de manejo de excepciones (opcional)
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -57,8 +54,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//  Seguridad (si usas autenticación)
+app.UseAuthentication();
 app.UseAuthorization();
 
+//  Configurar controladores
 app.MapControllers();
 
 app.Run();
