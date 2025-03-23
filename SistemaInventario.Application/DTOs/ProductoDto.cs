@@ -15,5 +15,9 @@ namespace SistemaInventario.Application.DTOs
         public string Nombre { get; set; } = string.Empty;
         public decimal Precio { get; set; }
         public int Cantidad { get; set; }
+
+        public int CantidadStock { get; set; }
+
+        public bool Activo { get; set; }
     }
 }

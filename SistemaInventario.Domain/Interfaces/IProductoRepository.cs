@@ -12,6 +12,8 @@ namespace SistemaInventario.Domain.Interfaces
     {
         // Obtener todos los productos
         Task<IEnumerable<Producto>> ObtenerTodosAsync();
+
+        Task<IEnumerable<Producto>> ObtenerProductosActivosAsync();
         // Obtener un producto por su Id
         Task<Producto?> ObtenerPorIdsync(Guid id);
         // Crear un nuevo producto

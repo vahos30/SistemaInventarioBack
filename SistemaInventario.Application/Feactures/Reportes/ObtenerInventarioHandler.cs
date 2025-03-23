@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -21,11 +20,17 @@ namespace SistemaInventario.Application.Feactures.Reportes
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductoDto>> Handle(ObtenerInventarioQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductoDto>> Handle(
+            ObtenerInventarioQuery request,
+            CancellationToken cancellationToken)
         {
+            // Obtener todos los productos
             var productos = await _productoRepository.ObtenerTodosAsync();
-            return _mapper.Map<IEnumerable<ProductoDto>>(productos);
-        }
 
+            // Filtrar solo productos activos
+            var productosActivos = await _productoRepository.ObtenerProductosActivosAsync();
+
+            return _mapper.Map<IEnumerable<ProductoDto>>(productosActivos);
+        }
     }
 }

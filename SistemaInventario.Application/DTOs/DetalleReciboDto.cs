@@ -10,9 +10,11 @@ namespace SistemaInventario.Application.DTOs
     /// Objeto de transferencia de datos para un detalle de recibo.
     public class DetalleReciboDto
     {
-      
-        public Guid ProductoId { get; set; }
+
+        public Guid Id { get; set; }
         public int Cantidad { get; set; }
-        public decimal Precio { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public decimal Subtotal { get; set; } 
+        public Guid ProductoId { get; set; }
     }
 }
