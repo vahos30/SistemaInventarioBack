@@ -15,10 +15,9 @@ namespace SistemaInventario.Application.DTOs
         public Guid Id { get; set; }
         public Guid ClienteId { get; set; }
         public string NumeroDocumento { get; set; } = string.Empty;
-
         public DateTime Fecha { get; set; }
-
-        public List<DetalleReciboDto> Detalle { get; set; } = new();
+        public decimal Total { get; set; } 
+        public List<DetalleReciboDto> Detalles { get; set; } = new();
     }
 }
 

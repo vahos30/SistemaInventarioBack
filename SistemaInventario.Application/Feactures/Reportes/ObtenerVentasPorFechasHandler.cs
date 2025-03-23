@@ -21,6 +21,11 @@ namespace SistemaInventario.Application.Feactures.Reportes
         }
         public async Task<IEnumerable<ReciboDto>> Handle(ObtenerVentasPorFechasQuery request, CancellationToken cancellationToken)
         {
+            if (request.FechaInicio > request.FechaFin)
+            {
+                throw new ArgumentException("La fecha de inicio no puede ser mayor a la fecha fin");
+            }
+
             var ventas = await _reciboRepository.ObtenerVentasPorFechaAsync(request.FechaInicio, request.FechaFin);
             return _mapper.Map<IEnumerable<ReciboDto>>(ventas);
         }

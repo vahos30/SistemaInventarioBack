@@ -24,12 +24,18 @@ namespace SistemaInventario.Infrastructure.Repositories
         {
             var hoy = DateTime.UtcNow.Date;
             return await _context.Recibos
+                .Include(r => r.Cliente)          
                 .Include(r => r.Detalles)
+                    .ThenInclude(d => d.Producto) 
                 .Where(r => r.Fecha == hoy)
                 .ToListAsync();
 
+        }
 
-
+        public async Task AgregarAsync(Recibo recibo)
+        {
+            await _context.Recibos.AddAsync(recibo);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Recibo>> ObtenerVentasPorFechaAsync(DateTime fechaInicio, DateTime fechaFin)
@@ -39,6 +45,23 @@ namespace SistemaInventario.Infrastructure.Repositories
                 .Where(r => r.Fecha >= fechaInicio && r.Fecha <= fechaFin)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Recibo>> ObtenerRecibosPorClientesAsync(Guid clienteId)
+        {
+            return await _context.Recibos
+                .Include(r => r.Detalles)
+                .Where(r => r.ClienteId == clienteId)
+                .ToListAsync();
+        }
+
+        public async Task<Recibo?> ObtenerPorIdAsync(Guid id) =>
+    await _context.Recibos
+        .Include(r => r.Cliente)          
+        .Include(r => r.Detalles)
+            .ThenInclude(d => d.Producto) 
+        .FirstOrDefaultAsync(r => r.Id == id);
+
+
 
 
     }
