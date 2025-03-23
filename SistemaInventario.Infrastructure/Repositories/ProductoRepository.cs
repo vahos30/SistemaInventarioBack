@@ -44,5 +44,12 @@ namespace SistemaInventario.Infrastructure.Repositories
 
         public async Task<Producto?> ObtenerPorIdsync(Guid id) =>
             await _context.Productos.FindAsync(id);
+
+        public async Task<IEnumerable<Producto>> ObtenerProductosActivosAsync()
+        {
+            return await _context.Productos
+                                 .Where(p => p.Activo) 
+                                 .ToListAsync();
+        }
     }
 }

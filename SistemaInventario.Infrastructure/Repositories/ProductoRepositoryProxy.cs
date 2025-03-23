@@ -49,5 +49,13 @@ namespace SistemaInventario.Infrastructure.Repositories
             _logger.LogInformation("Obteniendo producto con ID: {Id}", id);
             return await _repositorioReal.ObtenerPorIdsync(id);
         }
+
+        public async Task<IEnumerable<Producto>> ObtenerProductosActivosAsync()
+        {
+            _logger.LogInformation("Obteniendo productos activos");
+            var productosActivos = await _repositorioReal.ObtenerProductosActivosAsync();
+            _logger.LogInformation("Se obtuvieron {Count} productos activos", productosActivos.Count());
+            return productosActivos;
+        }
     }
 }

@@ -14,10 +14,18 @@ namespace SistemaInventario.Domain.Entities
         //nombre del producto
         public string Nombre { get; set; } = string.Empty;
 
-        //descripcion del producto
+        //Precio del producto
         public decimal Precio { get; set; } = 0;
+
+        // Descripción del producto
+        public string Descripcion { get; set; } = string.Empty;
+
 
         //cantidad de productos
         public int Cantidad { get; set; } = 0;
+
+        public int CantidadStock { get; set; }
+
+        public bool Activo { get; set; }
     }
 }
