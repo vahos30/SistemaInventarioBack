@@ -12,7 +12,7 @@ using SistemaInventario.Infrastructure.Persistence;
 namespace SistemaInventario.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250329211903_Initial")]
+    [Migration("20250330005934_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -137,7 +137,7 @@ namespace SistemaInventario.Infrastructure.Migrations
             modelBuilder.Entity("SistemaInventario.Domain.Entities.DetalleRecibo", b =>
                 {
                     b.HasOne("SistemaInventario.Domain.Entities.Producto", "Producto")
-                        .WithMany("Detalles")
+                        .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -167,11 +167,6 @@ namespace SistemaInventario.Infrastructure.Migrations
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Cliente", b =>
                 {
                     b.Navigation("Recibos");
-                });
-
-            modelBuilder.Entity("SistemaInventario.Domain.Entities.Producto", b =>
-                {
-                    b.Navigation("Detalles");
                 });
 
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Recibo", b =>

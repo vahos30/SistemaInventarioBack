@@ -257,8 +257,6 @@ var assemblies = [
   {
     "name": "SistemaInventario.Infrastructure",
     "classes": [
-      { "name": "SistemaInventario.Infrastructure.Migrations.AppDbContextModelSnapshot", "rp": "SistemaInventario.Infrastructure_AppDbContextModelSnapshot.html", "cl": 0, "ucl": 151, "cal": 151, "tl": 181, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "SistemaInventario.Infrastructure.Migrations.Initial", "rp": "SistemaInventario.Infrastructure_Initial.html", "cl": 0, "ucl": 250, "cal": 250, "tl": 309, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "SistemaInventario.Infrastructure.Persistence.AppDbContext", "rp": "SistemaInventario.Infrastructure_AppDbContext.html", "cl": 26, "ucl": 0, "cal": 26, "tl": 44, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "SistemaInventario.Infrastructure.Persistence.AppDbContextFactory", "rp": "SistemaInventario.Infrastructure_AppDbContextFactory.html", "cl": 0, "ucl": 15, "cal": 15, "tl": 44, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "SistemaInventario.Infrastructure.Repositories.ClienteRepository", "rp": "SistemaInventario.Infrastructure_ClienteRepository.html", "cl": 18, "ucl": 7, "cal": 25, "tl": 60, "cb": 2, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },

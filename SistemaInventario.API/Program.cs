@@ -8,8 +8,18 @@ using SistemaInventario.Infrastructure.Repositories;
 using MediatR;
 using SistemaInventario.Application.Feactures.Clientes;
 using SistemaInventario.Application.Feactures.Recibos;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configurar serialización JSON
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
 // Registrar DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -23,15 +33,14 @@ builder.Services.AddScoped<IProductoRepository>(provider =>
         new ProductoRepository(provider.GetRequiredService<AppDbContext>()),
         provider.GetRequiredService<ILogger<ProductoRepositoryProxy>>()));
 
-// MediatR (v11.1.0)
-builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly); // ? Clientes
-builder.Services.AddMediatR(typeof(CrearReciboCommandHandler).Assembly);  // ? Recibos
+// MediatR
+builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly);
+builder.Services.AddMediatR(typeof(CrearReciboCommandHandler).Assembly);
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Swagger y Controladores
-builder.Services.AddControllers();
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -47,4 +56,18 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+// Convertidor personalizado para DateTime
+public class DateTimeConverter : JsonConverter<DateTime>
+{
+    public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        return DateTime.Parse(reader.GetString()!);
+    }
+
+    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
+    }
+}
 
