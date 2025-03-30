@@ -20,5 +20,7 @@ namespace SistemaInventario.Domain.Interfaces
         Task ActualizarAsync(Cliente cliente);
         // Eliminar un cliente existente
         Task EliminarAsync (Guid id);
+
+        Task<bool> ExisteAsync(Guid clienteId);
     }
 }

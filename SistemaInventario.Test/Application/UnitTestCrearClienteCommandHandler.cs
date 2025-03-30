@@ -45,6 +45,7 @@ namespace SistemaInventario.Test.Application
             var command = new CrearClienteCommand
             {
                 Nombre = "Cliente 1",
+                Apellido = "Apellido 1",
                 NumeroDocumento = "123456",
                 Direccion = "Calle 123",
                 Telefono = "1234567890",
@@ -62,6 +63,7 @@ namespace SistemaInventario.Test.Application
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(command.Nombre, result.Nombre);
+            Assert.AreEqual(command.Apellido, result.Apellido);
             Assert.AreEqual(command.NumeroDocumento, result.NumeroDocumento);
             Assert.AreEqual(command.Direccion, result.Direccion);
             Assert.AreEqual(command.Telefono, result.Telefono);

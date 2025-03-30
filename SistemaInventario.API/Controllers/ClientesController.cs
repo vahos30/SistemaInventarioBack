@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SistemaInventario.Application.DTOs;
 using SistemaInventario.Domain.Entities;
 using SistemaInventario.Infrastructure.Persistence;
 
@@ -15,43 +17,46 @@ namespace SistemaInventario.API.Controllers
     public class ClientesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ClientesController(AppDbContext context)
+        public ClientesController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper; 
         }
 
         // GET: api/Clientes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        public async Task<ActionResult<IEnumerable<ClienteDto>>> GetClientes()
         {
-            return await _context.Clientes.ToListAsync();
+            var clientes = await _context.Clientes.ToListAsync();
+            return Ok(_mapper.Map<List<ClienteDto>>(clientes));
         }
 
         // GET: api/Clientes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> GetCliente(Guid id)
+        public async Task<ActionResult<ClienteDto>> GetCliente(Guid id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = await _context.Clientes
+                .Include(c => c.Recibos)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-
-            return cliente;
+            if (cliente == null) return NotFound();
+            return Ok(_mapper.Map<ClienteDto>(cliente));
         }
 
-        // PUT: api/Clientes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(Guid id, Cliente cliente)
-        {
-            if (id != cliente.Id)
-            {
-                return BadRequest();
-            }
 
+        // PUT: api/Clientes/5
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCliente(Guid id, [FromBody] ClienteDto clienteDto)
+        {
+            if (id != clienteDto.Id) return BadRequest();
+
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente == null) return NotFound();
+
+            _mapper.Map(clienteDto, cliente); // ✅ Actualiza la entidad desde el DTO
             _context.Entry(cliente).State = EntityState.Modified;
 
             try
@@ -60,24 +65,17 @@ namespace SistemaInventario.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ClienteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                if (!ClienteExists(id)) return NotFound();
+                else throw;
             }
 
             return NoContent();
         }
 
-        // POST: api/Clientes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
+        public async Task<ActionResult<Cliente>> PostCliente([FromBody] ClienteDto clienteDto)
         {
+            var cliente = _mapper.Map<Cliente>(clienteDto);
             _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();
 

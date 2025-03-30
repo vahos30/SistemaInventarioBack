@@ -24,6 +24,9 @@ namespace SistemaInventario.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> ExisteAsync(Guid clienteId)
+        => await _context.Clientes.AnyAsync(c => c.Id == clienteId);
+
         public async Task EliminarAsync(Guid id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
@@ -45,6 +48,13 @@ namespace SistemaInventario.Infrastructure.Repositories
 
         public async Task<Cliente?> ObtenerPorIdsync(Guid id) =>
             await _context.Clientes.FindAsync(id);
+
+        public async Task<Cliente?> ObtenerClienteConRecibosAsync(Guid id)
+        {
+            return await _context.Clientes
+                .Include(c => c.Recibos)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
 
     }
 }

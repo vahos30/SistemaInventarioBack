@@ -32,13 +32,11 @@ namespace SistemaInventario.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProducto(Guid id)
         {
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _context.Productos
+                .Include(d => d.Descripcion) 
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (producto == null)
-            {
-                return NotFound();
-            }
-
+            if (producto == null) return NotFound();
             return producto;
         }
 

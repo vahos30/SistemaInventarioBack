@@ -57,5 +57,21 @@ namespace SistemaInventario.Infrastructure.Repositories
             _logger.LogInformation("Se obtuvieron {Count} productos activos", productosActivos.Count());
             return productosActivos;
         }
+
+        public async Task<bool> ExisteAsync(Guid productoId)
+        {
+            _logger.LogInformation("Verificando existencia del producto con ID: {ProductoId}", productoId);
+            var existe = await _repositorioReal.ExisteAsync(productoId);
+            _logger.LogInformation("Producto existe: {Existe}", existe);
+            return existe;
+        }
+
+        public async Task<IEnumerable<Producto>> ObtenerProductosConDescripcionAsync()
+        {
+            _logger.LogInformation("Obteniendo productos con descripción");
+            return await _repositorioReal.ObtenerProductosConDescripcionAsync();
+        }
+
+
     }
 }

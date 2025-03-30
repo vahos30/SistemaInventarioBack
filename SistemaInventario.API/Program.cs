@@ -7,60 +7,44 @@ using SistemaInventario.Domain.Interfaces;
 using SistemaInventario.Infrastructure.Repositories;
 using MediatR;
 using SistemaInventario.Application.Feactures.Clientes;
-
+using SistemaInventario.Application.Feactures.Recibos;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//  Registrar DbContext con la cadena de conexión
+// Registrar DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//  Registrar Repositorios
+// Repositorios
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IReciboRepository, ReciboRepository>();
-
-//  Registrar ProductoRepository con Proxy
 builder.Services.AddScoped<IProductoRepository>(provider =>
-{
-    var repoReal = new ProductoRepository(provider.GetRequiredService<AppDbContext>());
-    var logger = provider.GetRequiredService<ILogger<ProductoRepositoryProxy>>();
-    return new ProductoRepositoryProxy(repoReal, logger);
-});
+    new ProductoRepositoryProxy(
+        new ProductoRepository(provider.GetRequiredService<AppDbContext>()),
+        provider.GetRequiredService<ILogger<ProductoRepositoryProxy>>()));
 
-//  Registrar MediatR
-builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly);
+// MediatR (v11.1.0)
+builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly); // ? Clientes
+builder.Services.AddMediatR(typeof(CrearReciboCommandHandler).Assembly);  // ? Recibos
 
-//  Registrar AutoMapper
+// AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-//  Registrar controladores
+// Swagger y Controladores
 builder.Services.AddControllers();
-
-//  Configurar Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//  Middleware de manejo de excepciones (opcional)
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-
-//  Seguridad (si usas autenticación)
-app.UseAuthentication();
 app.UseAuthorization();
-
-//  Configurar controladores
 app.MapControllers();
-
 app.Run();
-
 

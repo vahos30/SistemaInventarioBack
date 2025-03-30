@@ -1,53 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SistemaInventario.Domain.Entities;
 
 namespace SistemaInventario.Infrastructure.Persistence
-{
-    // Dbcontext para el sistema de inventario
-    // Aqui se configura las entidades y las relaiones con SQL Server
-    public class AppDbContext : DbContext
+{   public class AppDbContext : DbContext
     {
-        // se inyectan las opciones del DbContext a traves del constructor
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // Definicion de los DbSet para las entidades
-        public DbSet<Cliente> Clientes { get; set; } = null!;
-        public DbSet<Producto> Productos { get; set; } = null!;
-        public DbSet<Recibo> Recibos { get; set; } = null!;
-        public DbSet<DetalleRecibo> DetallesRecibo { get; set; } = null!;
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<Recibo> Recibos { get; set; }
+        public DbSet<DetalleRecibo> DetallesRecibo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configuramos las claves Primarias
+            // Configuración de claves
             modelBuilder.Entity<Cliente>().HasKey(c => c.Id);
             modelBuilder.Entity<Producto>().HasKey(p => p.Id);
             modelBuilder.Entity<Recibo>().HasKey(r => r.Id);
             modelBuilder.Entity<DetalleRecibo>().HasKey(d => d.Id);
 
-            // Configuramos las relacion entre Factura y Cliente
+            // Relación Recibo -> Cliente
             modelBuilder.Entity<Recibo>()
                 .HasOne(r => r.Cliente)
-                .WithMany()
-                .HasForeignKey(r => r.ClienteId);
+                .WithMany(c => c.Recibos) // ✅ Navegación inversa
+                .HasForeignKey(r => r.ClienteId)
+                .OnDelete(DeleteBehavior.Restrict); // Evita eliminar clientes con recibos
 
-            // Configuramos la relacion entre DetalleRecibo y Recibo
+            // Relación DetalleRecibo -> Recibo (Configuración principal)
             modelBuilder.Entity<DetalleRecibo>()
                 .HasOne(d => d.Recibo)
                 .WithMany(r => r.Detalles)
-                .HasForeignKey(d => d.ReciboId);
+                .HasForeignKey(d => d.ReciboId)
+                .OnDelete(DeleteBehavior.Cascade); // Elimina detalles al borrar recibo
 
-            // Configuramos la relacion entre DetalleRecibo y Producto
+            // Relación DetalleRecibo -> Producto
             modelBuilder.Entity<DetalleRecibo>()
                 .HasOne(d => d.Producto)
                 .WithMany()
-                .HasForeignKey(d => d.ProductoId);
+                .HasForeignKey(d => d.ProductoId)
+                .OnDelete(DeleteBehavior.Restrict); // Evita eliminar productos con detalles
         }
     }
 }

@@ -20,10 +20,7 @@ namespace SistemaInventario.Domain.Entities
         // Descripción del producto
         public string Descripcion { get; set; } = string.Empty;
 
-
         //cantidad de productos
-        public int Cantidad { get; set; } = 0;
-
         public int CantidadStock { get; set; }
 
         public bool Activo { get; set; }

@@ -11,17 +11,22 @@ namespace SistemaInventario.Domain.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        // se asocia al cliente mediante su Id.
+        // Se asocia al cliente mediante su Id.
         public Guid ClienteId { get; set; }
 
-        // cliente completo para navegacion
+        // Cliente completo para navegación.
         public Cliente Cliente { get; set; } = null!;
 
-        // fecha en la que se realiza la factura
+        // Fecha en la que se realiza la factura.
         public DateTime Fecha { get; set; } = DateTime.UtcNow;
 
-        // lista de los detalles del recibo
-
+        // Lista de los detalles del recibo.
         public List<DetalleRecibo> Detalles { get; set; } = new();
+
+        // Propiedad calculada que retorna el total del recibo.
+        public decimal Total => Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
+
+        
     }
 }
+

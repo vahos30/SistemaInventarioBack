@@ -1,67 +1,92 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using SistemaInventario.Application.DTOs;
 using SistemaInventario.Application.Feactures.Recibos;
 using SistemaInventario.Application.Mapping;
 using SistemaInventario.Domain.Entities;
-using SistemaInventario.Domain.Interfaces;
+using SistemaInventario.Infrastructure.Persistence;
+using SistemaInventario.Infrastructure.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SistemaInventario.Test.Application
 {
     [TestClass]
     public class UnitTestCrearReciboCommandHandler
     {
-        private Mock<IReciboRepository> _reciboRepositoryMock;
-        private IMapper _mapper;
+        private AppDbContext _context;
         private CrearReciboCommandHandler _handler;
 
         [TestInitialize]
         public void Setup()
         {
-            //configuramos el mock para IReciboRepository
-            _reciboRepositoryMock = new Mock<IReciboRepository>();
-            //configuramos AutoMapper usando el MappingProfile de la aplicacion
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<MappingProfile>();
-            });
-            _mapper = config.CreateMapper();
-            //creamos la instancia del handler inyectandq el mock y el mapper
-            _handler = new CrearReciboCommandHandler(_reciboRepositoryMock.Object, _mapper);
+            // Configurar base de datos en memoria
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDB_Recibos")
+                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)) // Suprime advertencia de transacciones
+                .Options;
+
+            _context = new AppDbContext(options);
+
+            // Configurar AutoMapper
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+            var mapper = config.CreateMapper();
+
+            // Inicializar handler con repositorios reales
+            _handler = new CrearReciboCommandHandler(
+                new ReciboRepository(_context),
+                new ProductoRepository(_context),
+                _context,
+                mapper
+            );
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
         }
 
         [TestMethod]
-        public async Task Handle_ValidCommand_ShouldCreateRecibo()
+        public async Task Handle_ValidCommand_ShouldUpdateStock()
         {
-            //Arrange
+            // Arrange: Crear y agregar producto de prueba
+            var producto = new Producto
+            {
+                Id = Guid.NewGuid(),
+                Nombre = "Laptop Gamer",
+                Precio = 1500000,
+                CantidadStock = 10,
+                Activo = true
+            };
+
+            await _context.Productos.AddAsync(producto);
+            await _context.SaveChangesAsync();
+
             var command = new CrearReciboCommand
             {
                 ClienteId = Guid.NewGuid(),
                 Detalles = new List<DetalleReciboDto>
                 {
-                    new DetalleReciboDto { ProductoId = Guid.NewGuid(),Cantidad = 1,PrecioUnitario = 100 },
-                    new DetalleReciboDto { ProductoId = Guid.NewGuid(),Cantidad = 2,PrecioUnitario = 200 }
-
+                    new DetalleReciboDto
+                    {
+                        ProductoId = producto.Id,
+                        Cantidad = 3,
+                        PrecioUnitario = producto.Precio
+                    }
                 }
             };
-            //configuramos el mock para que el metodo AgregarAsync se complete sin errores
-            _reciboRepositoryMock.
-                Setup(repo => repo.AgregarAsync(It.IsAny<Recibo>())).
-                Returns(Task.CompletedTask);
-            //Act
-            var result = await _handler.Handle(command, CancellationToken.None);
-            //Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(command.ClienteId, result.ClienteId);
-            Assert.AreEqual(command.Detalles.Count, result.Detalles.Count);
 
-            _reciboRepositoryMock.Verify(repo => repo.AgregarAsync(It.IsAny<Recibo>()), Times.Once);
+            // Act: Ejecutar el handler
+            await _handler.Handle(command, CancellationToken.None);
+
+            // Assert: Verificar actualización de stock
+            var productoActualizado = await _context.Productos.FindAsync(producto.Id);
+            Assert.AreEqual(7, productoActualizado.CantidadStock); // 10 - 3 = 7
         }
     }
 }

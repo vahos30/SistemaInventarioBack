@@ -15,6 +15,9 @@ namespace SistemaInventario.Domain.Entities
         // Nombre del cliente
         public string Nombre { get; set; } = string.Empty;
 
+        // Apellido del cliente
+        public string Apellido { get; set; } = string.Empty;
+
         // Numero de documento del cliente
         public string NumeroDocumento { get; set; } = string.Empty;
 
@@ -26,5 +29,8 @@ namespace SistemaInventario.Domain.Entities
 
         // Email del cliente
         public string Email { get; set; } = string.Empty;
+
+        // Navegación inversa
+        public List<Recibo> Recibos { get; set; } = new(); // ✅ Nueva propiedad
     }
 }
