@@ -12,8 +12,8 @@ using SistemaInventario.Infrastructure.Persistence;
 namespace SistemaInventario.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250313162114_AddDireccionToCliente")]
-    partial class AddDireccionToCliente
+    [Migration("20250329211903_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,10 @@ namespace SistemaInventario.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Direccion")
                         .IsRequired()
@@ -89,8 +93,15 @@ namespace SistemaInventario.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Cantidad")
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("CantidadStock")
                         .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -126,9 +137,9 @@ namespace SistemaInventario.Infrastructure.Migrations
             modelBuilder.Entity("SistemaInventario.Domain.Entities.DetalleRecibo", b =>
                 {
                     b.HasOne("SistemaInventario.Domain.Entities.Producto", "Producto")
-                        .WithMany()
+                        .WithMany("Detalles")
                         .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("SistemaInventario.Domain.Entities.Recibo", "Recibo")
@@ -145,12 +156,22 @@ namespace SistemaInventario.Infrastructure.Migrations
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Recibo", b =>
                 {
                     b.HasOne("SistemaInventario.Domain.Entities.Cliente", "Cliente")
-                        .WithMany()
+                        .WithMany("Recibos")
                         .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("SistemaInventario.Domain.Entities.Cliente", b =>
+                {
+                    b.Navigation("Recibos");
+                });
+
+            modelBuilder.Entity("SistemaInventario.Domain.Entities.Producto", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Recibo", b =>

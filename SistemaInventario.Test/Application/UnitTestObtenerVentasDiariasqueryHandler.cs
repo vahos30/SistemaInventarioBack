@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -55,7 +56,7 @@ namespace SistemaInventario.Test.Application
             var reciboPrueba = new Recibo
             {
                 Id = Guid.NewGuid(),
-                Fecha = DateTime.UtcNow,
+                Fecha = DateTime.UtcNow,  // Suponemos que es la fecha de hoy
                 Detalles = new List<DetalleRecibo>
                 {
                     new DetalleRecibo
@@ -75,8 +76,13 @@ namespace SistemaInventario.Test.Application
                 }
             };
 
-            _reciboRepositoryMock.Setup(x => x.ObtenerVentasDiariasAsync())
-                .ReturnsAsync(new List<Recibo> { reciboPrueba });
+            // Calcula el total esperado (2*500 + 1*300 = 1300)
+            decimal totalEsperado = reciboPrueba.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
+            var resultadoEsperado = (Recibos: (IEnumerable<Recibo>)new List<Recibo> { reciboPrueba }, Total: totalEsperado);
+
+            // Ahora pasamos un argumento al método: It.IsAny<DateTime?>() o null.
+            _reciboRepositoryMock.Setup(x => x.ObtenerVentasDiariasAsync(It.IsAny<DateTime?>()))
+                .ReturnsAsync(resultadoEsperado);
 
             var query = new ObtenerVentasDiariasQuery();
 
@@ -85,17 +91,10 @@ namespace SistemaInventario.Test.Application
             var reciboMapeado = resultado.First();
 
             // Assert
-            // Verificar total
             Assert.AreEqual(1300m, reciboMapeado.Total); // (2*500) + (1*300)
-
-            // Verificar mapeo básico
             Assert.AreEqual(reciboPrueba.Id, reciboMapeado.Id);
             Assert.AreEqual(reciboPrueba.Fecha, reciboMapeado.Fecha);
-
-            // Verificar detalles
             Assert.AreEqual(2, reciboMapeado.Detalles.Count);
-
-            // Verificar primer detalle
             var primerDetalle = reciboMapeado.Detalles[0];
             Assert.AreEqual(productoEjemplo.Id, primerDetalle.ProductoId);
             Assert.AreEqual(500m, primerDetalle.PrecioUnitario);
@@ -113,8 +112,10 @@ namespace SistemaInventario.Test.Application
                 Detalles = new List<DetalleRecibo>()
             };
 
-            _reciboRepositoryMock.Setup(x => x.ObtenerVentasDiariasAsync())
-                .ReturnsAsync(new List<Recibo> { reciboVacio });
+            var resultadoEsperado = (Recibos: (IEnumerable<Recibo>)new List<Recibo> { reciboVacio }, Total: 0m);
+
+            _reciboRepositoryMock.Setup(x => x.ObtenerVentasDiariasAsync(It.IsAny<DateTime?>()))
+                .ReturnsAsync(resultadoEsperado);
 
             // Act
             var resultado = await _handler.Handle(new ObtenerVentasDiariasQuery(), CancellationToken.None);
@@ -124,3 +125,7 @@ namespace SistemaInventario.Test.Application
         }
     }
 }
+
+
+
+

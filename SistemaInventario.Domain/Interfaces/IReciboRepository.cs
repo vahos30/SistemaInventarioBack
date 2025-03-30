@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SistemaInventario.Domain.Entities;
 
@@ -9,18 +7,24 @@ namespace SistemaInventario.Domain.Interfaces
 {
     public interface IReciboRepository
     {
-        //Agregar un nuevo recibo
+        // Agregar un nuevo recibo
         Task AgregarAsync(Recibo recibo);
-        // Metodo para obtener todos los recibos del dia actual
-        Task<IEnumerable<Recibo>> ObtenerVentasDiariasAsync();
 
-        // Metodo para obtener los recibos en un rango de fechas
+        // Método para obtener todos los recibos del día actual,
+        // devolviendo un tuple con la lista de recibos y el total calculado.
+        Task<(IEnumerable<Recibo> Recibos, decimal Total)> ObtenerVentasDiariasAsync(DateTime? fechaReferencia);
+
+        // Método para obtener los recibos en un rango de fechas
         Task<IEnumerable<Recibo>> ObtenerVentasPorFechaAsync(DateTime fechaInicio, DateTime fechaFin);
 
-        // Metodo para obtener un recibo por su Id
+        // Método para obtener un recibo por su Id
         Task<Recibo?> ObtenerPorIdAsync(Guid id);
 
-        // Metodo para obtener los recibos de un cliente
+        // Método para obtener los recibos de un cliente
         Task<IEnumerable<Recibo>> ObtenerRecibosPorClientesAsync(Guid clienteId);
+
+        // Método para obtener todos los recibos
+        Task<IEnumerable<Recibo>> ObtenerRecibosAsync();
     }
 }
+

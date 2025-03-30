@@ -51,5 +51,16 @@ namespace SistemaInventario.Infrastructure.Repositories
                                  .Where(p => p.Activo) 
                                  .ToListAsync();
         }
+
+        public async Task<IEnumerable<Producto>> ObtenerProductosConDescripcionAsync()
+        {
+            return await _context.Productos
+                                 .Where(p => !string.IsNullOrWhiteSpace(p.Descripcion))
+                                 .ToListAsync();
+        }
+
+
+        public async Task<bool> ExisteAsync(Guid productoId)
+        => await _context.Productos.AnyAsync(p => p.Id == productoId);
     }
 }

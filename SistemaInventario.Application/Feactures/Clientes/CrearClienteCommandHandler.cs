@@ -29,6 +29,7 @@ namespace SistemaInventario.Application.Feactures.Clientes
             var cliente = new Cliente
             {
                 Nombre = request.Nombre,
+                Apellido = request.Apellido,
                 NumeroDocumento = request.NumeroDocumento,
                 Telefono = request.Telefono,
                 Direccion = request.Direccion,

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -23,8 +22,10 @@ namespace SistemaInventario.Application.Feactures.Reportes
 
         public async Task<IEnumerable<ReciboDto>> Handle(ObtenerVentasDiariasQuery request, CancellationToken cancellationToken)
         {
-            var recibos = await _reciboRepository.ObtenerVentasDiariasAsync();
-            return _mapper.Map<IEnumerable<ReciboDto>>(recibos);
+            // Pasamos null para fechaReferencia (o request.FechaReferencia si el query lo tiene)
+            var result = await _reciboRepository.ObtenerVentasDiariasAsync(null);
+            return _mapper.Map<IEnumerable<ReciboDto>>(result.Recibos);
         }
     }
 }
+
