@@ -17,7 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+        // Actualiza la instancia para usar el converter del nuevo namespace
+        options.JsonSerializerOptions.Converters.Add(new Converters.DateTimeConverter());
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
@@ -55,19 +56,27 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
+await app.RunAsync();
 
-// Convertidor personalizado para DateTime
-public class DateTimeConverter : JsonConverter<DateTime>
+// Agrega la clase en un namespace con nombre
+namespace Converters
 {
-    public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        return DateTime.Parse(reader.GetString()!);
-    }
+    using System;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
 
-    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+    public class DateTimeConverter : JsonConverter<DateTime>
     {
-        writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return DateTime.Parse(reader.GetString()!);
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
+        }
     }
 }
+
 

@@ -1,0 +1,13 @@
+﻿C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\Controllers\ClientesController.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\Controllers\ProductosController.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\Controllers\RecibosController.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\Controllers\ReportesController.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\Program.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\obj\Debug\net8.0\SistemaInventario.API.GlobalUsings.g.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\obj\Debug\net8.0\SistemaInventario.API.AssemblyInfo.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\obj\Debug\net8.0\SistemaInventario.API.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\appsettings.Development.json
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\appsettings.json
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\SistemaInventario.API.http
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.API\Properties\launchSettings.json

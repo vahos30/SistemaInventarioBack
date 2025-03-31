@@ -1,0 +1,10 @@
+﻿C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Migrations\20250330005934_Initial.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Migrations\20250330005934_Initial.Designer.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Migrations\AppDbContextModelSnapshot.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Persistence\AppDbContext.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Persistence\AppDbContextFactory.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Repositories\ClienteRepository.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Repositories\ProductoRepository.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Repositories\ProductoRepositoryProxy.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Repositories\ReciboFactory.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Infrastructure\Repositories\ReciboRepository.cs
