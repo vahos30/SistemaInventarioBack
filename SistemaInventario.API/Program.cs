@@ -22,6 +22,19 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
+// Configurar CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("https://localhost:3000")
+          .AllowAnyOrigin()      // Permite cualquier origen
+          .AllowAnyHeader()      // Permite cualquier header
+          .AllowAnyMethod();
+    });
+
+});
+
 // Registrar DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -53,6 +66,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowLocalhost");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

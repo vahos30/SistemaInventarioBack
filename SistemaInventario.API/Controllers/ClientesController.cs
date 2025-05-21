@@ -45,9 +45,21 @@ namespace SistemaInventario.API.Controllers
             return Ok(_mapper.Map<ClienteDto>(cliente));
         }
 
+        // GET: api/Clientes/NumeroDocumento/
+
+        [HttpGet("por-documento/{numeroDocumento}")]
+        public async Task<ActionResult<ClienteDto>> GetClientePorNumeroDocumento(string numeroDocumento)
+        {
+            var cliente = await _context.Clientes
+                .Include(c => c.Recibos)
+                .FirstOrDefaultAsync(c => c.NumeroDocumento == numeroDocumento);
+            if (cliente == null) return NotFound();
+            return Ok(_mapper.Map<ClienteDto>(cliente));
+        }
+
 
         // PUT: api/Clientes/5
-        
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCliente(Guid id, [FromBody] ClienteDto clienteDto)
         {

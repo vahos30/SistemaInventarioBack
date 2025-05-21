@@ -19,6 +19,12 @@ namespace SistemaInventario.Infrastructure.Persistence
             modelBuilder.Entity<Recibo>().HasKey(r => r.Id);
             modelBuilder.Entity<DetalleRecibo>().HasKey(d => d.Id);
 
+            modelBuilder.Entity<Cliente>(entity =>
+            {
+                entity.HasIndex(c => c.NumeroDocumento)
+                .IsUnique();
+            });
+
             // Relación Recibo -> Cliente
             modelBuilder.Entity<Recibo>()
                 .HasOne(r => r.Cliente)
