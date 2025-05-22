@@ -8,8 +8,10 @@ using SistemaInventario.Infrastructure.Repositories;
 using MediatR;
 using SistemaInventario.Application.Feactures.Clientes;
 using SistemaInventario.Application.Feactures.Recibos;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+// Agrega los namespaces que necesites para tus servicios de aplicación
+using SistemaInventario.Application.Services;
+using SistemaInventario.Domain.Interfaces.SistemaInventario.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Actualiza la instancia para usar el converter del nuevo namespace
         options.JsonSerializerOptions.Converters.Add(new Converters.DateTimeConverter());
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
@@ -28,8 +29,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowLocalhost", policy =>
     {
         policy.WithOrigins("https://localhost:3000")
-          .AllowAnyOrigin()      // Permite cualquier origen
-          .AllowAnyHeader()      // Permite cualquier header
+          .AllowAnyOrigin()
+          .AllowAnyHeader()
           .AllowAnyMethod();
     });
 
@@ -42,10 +43,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Repositorios
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IReciboRepository, ReciboRepository>();
+builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>(); // <- Proveedor
+builder.Services.AddScoped<ICompraRepository, CompraRepository>();       // <- Compra
 builder.Services.AddScoped<IProductoRepository>(provider =>
     new ProductoRepositoryProxy(
         new ProductoRepository(provider.GetRequiredService<AppDbContext>()),
         provider.GetRequiredService<ILogger<ProductoRepositoryProxy>>()));
+
+// Servicios de aplicación (Opcional, pero recomendado)
+builder.Services.AddScoped<ProveedorService>();
+builder.Services.AddScoped<CompraService>();
 
 // MediatR
 builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly);
