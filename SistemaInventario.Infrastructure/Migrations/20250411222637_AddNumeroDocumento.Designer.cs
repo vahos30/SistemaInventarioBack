@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SistemaInventario.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SistemaInventario.Infrastructure.Persistence;
 namespace SistemaInventario.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250411222637_AddNumeroDocumento")]
+    partial class AddNumeroDocumento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,55 +61,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Clientes");
-                });
-
-            modelBuilder.Entity("SistemaInventario.Domain.Entities.Compra", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ProveedorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProveedorId");
-
-                    b.ToTable("Compras");
-                });
-
-            modelBuilder.Entity("SistemaInventario.Domain.Entities.DetalleCompra", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("CompraId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("ProductoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompraId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("DetallesCompra");
                 });
 
             modelBuilder.Entity("SistemaInventario.Domain.Entities.DetalleRecibo", b =>
@@ -164,43 +118,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                     b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("SistemaInventario.Domain.Entities.Proveedor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NIT")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RazonSocial")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NIT")
-                        .IsUnique();
-
-                    b.ToTable("Proveedores");
-                });
-
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Recibo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -218,36 +135,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                     b.HasIndex("ClienteId");
 
                     b.ToTable("Recibos");
-                });
-
-            modelBuilder.Entity("SistemaInventario.Domain.Entities.Compra", b =>
-                {
-                    b.HasOne("SistemaInventario.Domain.Entities.Proveedor", "Proveedor")
-                        .WithMany()
-                        .HasForeignKey("ProveedorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Proveedor");
-                });
-
-            modelBuilder.Entity("SistemaInventario.Domain.Entities.DetalleCompra", b =>
-                {
-                    b.HasOne("SistemaInventario.Domain.Entities.Compra", "Compra")
-                        .WithMany("Detalles")
-                        .HasForeignKey("CompraId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SistemaInventario.Domain.Entities.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Compra");
-
-                    b.Navigation("Producto");
                 });
 
             modelBuilder.Entity("SistemaInventario.Domain.Entities.DetalleRecibo", b =>
@@ -283,11 +170,6 @@ namespace SistemaInventario.Infrastructure.Migrations
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Cliente", b =>
                 {
                     b.Navigation("Recibos");
-                });
-
-            modelBuilder.Entity("SistemaInventario.Domain.Entities.Compra", b =>
-                {
-                    b.Navigation("Detalles");
                 });
 
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Recibo", b =>

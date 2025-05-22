@@ -1,0 +1,7 @@
+﻿C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Domain\Entities\Cliente.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Domain\Entities\DetalleRecibo.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Domain\Entities\Producto.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Domain\Entities\Recibo.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Domain\Interfaces\IClienteRepository.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Domain\Interfaces\IProductoRepository.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Domain\Interfaces\IReciboRepository.cs

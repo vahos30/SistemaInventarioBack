@@ -1,0 +1,20 @@
+﻿C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Application\UnitTestCrearClienteCommandHandler.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Application\UnitTestCrearReciboCommandHandler.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Application\UnitTestObtenerInventarioHandler.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Application\UnitTestObtenerReciboPorClienteHandler.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Application\UnitTestObtenerVentasDiariasqueryHandler.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Application\UnitTestObtenerVentasPorFechasHandler.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Infrastructure\UnitTestClienteRepository.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Infrastructure\UnitTestProductoRepository.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Infrastructure\UnitTestProductoRepositoryProxy.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Infrastructure\UnitTestReciboFactory.cs
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\Infrastructure\UnitTestReciboRepository.cs
+C:\Users\Yesica Montoya\.nuget\packages\microsoft.net.test.sdk\17.13.0\build\netcoreapp3.1\Microsoft.NET.Test.Sdk.Program.cs
+C:\Users\Yesica Montoya\.nuget\packages\microsoft.testplatform.testhost\17.13.0\build\netcoreapp3.1\x64\testhost.exe
+C:\Users\Yesica Montoya\.nuget\packages\microsoft.testplatform.testhost\17.13.0\build\netcoreapp3.1\x64\testhost.dll
+C:\Users\Yesica Montoya\.nuget\packages\mstest.testadapter\3.8.3\buildTransitive\_localization\es\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll
+C:\Users\Yesica Montoya\.nuget\packages\mstest.testadapter\3.8.3\buildTransitive\_localization\es\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll
+C:\Users\Yesica Montoya\Desktop\Programa Inventario\SistemaInventarioSolution\SistemaInventario.Test\TestResults\2c082d40-56d4-4942-b6a0-5184829306d3\coverage.cobertura.xml
+C:\Users\Yesica Montoya\.nuget\packages\mstest.testadapter\3.8.3\buildTransitive\net8.0\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\Yesica Montoya\.nuget\packages\mstest.testadapter\3.8.3\buildTransitive\net8.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\Yesica Montoya\.nuget\packages\mstest.testadapter\3.8.3\buildTransitive\net8.0\Microsoft.TestPlatform.AdapterUtilities.dll

@@ -68,6 +68,18 @@ namespace SistemaInventario.API.Controllers
             var ventas = await _mediator.Send(query);
             return Ok(ventas);
         }
+
+        /// <summary>
+        /// Obtiene las compras realizadas en un rango de fechas (o todas si no pasas fechas).
+        /// Endpoint: GET /api/reportes/compras?fechaInicio=YYYY-MM-DD&fechaFin=YYYY-MM-DD
+        /// </summary>
+        [HttpGet("compras")]
+        public async Task<IActionResult> ObtenerComprasPorFechas([FromQuery] DateTime? fechaInicio, [FromQuery] DateTime? fechaFin)
+        {
+            var query = new ObtenerComprasPorFechasQuery(fechaInicio, fechaFin);
+            var compras = await _mediator.Send(query);
+            return Ok(compras);
+        }
     }
 }
 

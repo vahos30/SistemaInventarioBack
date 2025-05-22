@@ -18,7 +18,7 @@ namespace SistemaInventario.Domain.Entities
         public Cliente Cliente { get; set; } = null!;
 
         // Fecha en la que se realiza la factura.
-        public DateTime Fecha { get; set; } = DateTime.UtcNow;
+        public DateTime Fecha { get; set; } = DateTime.Now;
 
         // Lista de los detalles del recibo.
         public List<DetalleRecibo> Detalles { get; set; } = new();
