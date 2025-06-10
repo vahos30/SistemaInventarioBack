@@ -28,10 +28,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost", policy =>
     {
-        policy.WithOrigins("https://localhost:3000")
-          .AllowAnyOrigin()
-          .AllowAnyHeader()
-          .AllowAnyMethod();
+        policy.WithOrigins("http://localhost:3000")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+
     });
 
 });
