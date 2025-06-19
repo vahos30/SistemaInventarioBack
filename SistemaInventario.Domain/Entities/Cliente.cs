@@ -18,6 +18,9 @@ namespace SistemaInventario.Domain.Entities
         // Apellido del cliente
         public string Apellido { get; set; } = string.Empty;
 
+        // Tipo de documento
+        public string TipoDocumento { get; set; } = string.Empty;
+
         // Numero de documento del cliente
         public string NumeroDocumento { get; set; } = string.Empty;
 

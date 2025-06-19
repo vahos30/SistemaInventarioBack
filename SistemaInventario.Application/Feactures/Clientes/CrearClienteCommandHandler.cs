@@ -30,6 +30,7 @@ namespace SistemaInventario.Application.Feactures.Clientes
             {
                 Nombre = request.Nombre,
                 Apellido = request.Apellido,
+                TipoDocumento = request.TipoDocumento,
                 NumeroDocumento = request.NumeroDocumento,
                 Telefono = request.Telefono,
                 Direccion = request.Direccion,
