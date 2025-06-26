@@ -14,8 +14,8 @@ namespace SistemaInventario.Application.DTOs
         public Guid Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public decimal Precio { get; set; }
+        public string Referencia { get; set; } = string.Empty;
         public int CantidadStock { get; set; }
-
         public bool Activo { get; set; }
     }
 }
