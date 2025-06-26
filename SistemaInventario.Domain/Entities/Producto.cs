@@ -17,6 +17,9 @@ namespace SistemaInventario.Domain.Entities
         //Precio del producto
         public decimal Precio { get; set; } = 0;
 
+        //Referencia del producto
+        public string Referencia { get; set; } = string.Empty;
+
         // Descripción del producto
         public string Descripcion { get; set; } = string.Empty;
 
