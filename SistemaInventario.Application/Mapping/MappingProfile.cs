@@ -24,12 +24,12 @@ namespace SistemaInventario.Application.Mapping
 
             CreateMap<Recibo, ReciboDto>()
            .ForMember(dest => dest.Total, opt => opt.MapFrom(src =>
-               src.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario))) 
+               src.Detalles.Sum(d => d.Subtotal))) 
            .ReverseMap();
 
             CreateMap<DetalleRecibo, DetalleReciboDto>()
                 .ForMember(dest => dest.Subtotal, opt => opt.MapFrom(src =>
-                    src.Cantidad * src.PrecioUnitario))
+                    src.Subtotal))
                 .ReverseMap(); 
         }
     }

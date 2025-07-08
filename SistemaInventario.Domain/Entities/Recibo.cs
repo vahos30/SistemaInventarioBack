@@ -23,10 +23,8 @@ namespace SistemaInventario.Domain.Entities
         // Lista de los detalles del recibo.
         public List<DetalleRecibo> Detalles { get; set; } = new();
 
-        // Propiedad calculada que retorna el total del recibo.
-        public decimal Total => Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
-
-        
+        // Total con descuentos aplicados
+        public decimal Total => Detalles.Sum(d => d.Subtotal);
     }
 }
 
