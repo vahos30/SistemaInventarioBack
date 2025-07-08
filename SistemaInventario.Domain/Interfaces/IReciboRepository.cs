@@ -25,6 +25,9 @@ namespace SistemaInventario.Domain.Interfaces
 
         // Método para obtener todos los recibos
         Task<IEnumerable<Recibo>> ObtenerRecibosAsync();
+
+        //Metodo para eliminar un recibo por su Id
+        Task EliminarAsync(Guid id);
     }
 }
 

@@ -51,5 +51,13 @@ namespace SistemaInventario.API.Controllers
             var resultado = await _mediator.Send(new ObtenerRecibosQuery());
             return Ok(resultado);
         }
+
+        // eliminar un recibo por su Id
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarRecibo(Guid id)
+        {
+            await _mediator.Send(new EliminarReciboCommand(id));
+            return NoContent();
+        }
     }
 }
