@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SistemaInventario.Domain.Entities;
 using SistemaInventario.Domain.Interfaces;
 using SistemaInventario.Infrastructure.Persistence;
@@ -72,6 +71,19 @@ namespace SistemaInventario.Infrastructure.Repositories
                     .ThenInclude(d => d.Producto)
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task EliminarAsync(Guid id)
+        {
+            var recibo = await _context.Recibos
+                .Include(r => r.Detalles)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (recibo != null)
+            {
+                _context.Recibos.Remove(recibo);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
