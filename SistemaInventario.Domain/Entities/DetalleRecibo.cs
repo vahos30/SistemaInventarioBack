@@ -25,5 +25,30 @@ namespace SistemaInventario.Domain.Entities
         // Precio unitario del producto al momento de la venta
         public decimal PrecioUnitario { get; set; }
 
+        // Tipo de descuento: "Porcentaje" o "ValorAbsoluto"
+        public string? TipoDescuento { get; set; }
+
+        // Valor del descuento (porcentaje o valor absoluto)
+        public decimal? ValorDescuento { get; set; }
+
+        // Subtotal con descuento aplicado
+        public decimal Subtotal
+        {
+            get
+            {
+                decimal descuento = 0;
+                if (TipoDescuento == "Porcentaje" && ValorDescuento.HasValue)
+                {
+                    descuento = PrecioUnitario * (ValorDescuento.Value / 100m);
+                }
+                else if (TipoDescuento == "ValorAbsoluto" && ValorDescuento.HasValue)
+                {
+                    descuento = ValorDescuento.Value;
+                }
+                decimal precioFinal = PrecioUnitario - descuento;
+                if (precioFinal < 0) precioFinal = 0;
+                return Cantidad * precioFinal;
+            }
+        }
     }
 }
