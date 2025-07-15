@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
 
 env:
-  SOLUTION_DIR: "SistemaInventarioSolution"
-  API_PROJECT: "SistemaInventario.API"
-  INFRASTRUCTURE_PROJECT: "SistemaInventario.Infrastructure"
+  SOLUTION_FILE: "SistemaInventarioSolution.sln"
+  API_PROJECT_DIR: "SistemaInventario.API"
+  INFRASTRUCTURE_PROJECT_DIR: "SistemaInventario.Infrastructure"
 
 jobs:
   build-and-test:
@@ -25,14 +25,26 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Verify solution file
+        run: |
+          echo "=== Archivos en el repositorio ==="
+          ls -la
+          echo "=== Verificando archivo .sln ==="
+          if [ -f "${{ env.SOLUTION_FILE }}" ]; then
+            echo "Archivo de solución encontrado"
+          else
+            echo "ERROR: No se encontró ${{ env.SOLUTION_FILE }}"
+            exit 1
+          fi
+
       - name: Restore dependencies
-        run: dotnet restore ${{ env.SOLUTION_DIR }}/SistemaInventario.sln
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
 
       - name: Build solution
-        run: dotnet build ${{ env.SOLUTION_DIR }}/SistemaInventario.sln --configuration Release --no-restore
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test ${{ env.SOLUTION_DIR }}/SistemaInventario.sln --configuration Release --logger "trx;LogFileName=test-results.trx" --no-build
+        run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --logger "trx;LogFileName=test-results.trx" --no-build
 
       - name: Publish test results
         uses: actions/upload-artifact@v4
@@ -42,7 +54,7 @@ jobs:
           path: "**/*.trx"
 
       - name: Publish API project
-        run: dotnet publish ${{ env.SOLUTION_DIR }}/${{ env.API_PROJECT }} -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish ${{ env.API_PROJECT_DIR }} -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -72,15 +84,6 @@ jobs:
       - name: Add dotnet tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Verify project structure
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "API project contents:"
-          ls -la ${{ env.SOLUTION_DIR }}/${{ env.API_PROJECT }}
-          echo "Infrastructure project contents:"
-          ls -la ${{ env.SOLUTION_DIR }}/${{ env.INFRASTRUCTURE_PROJECT }}
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -90,8 +93,8 @@ jobs:
 
       - name: Apply database migrations
         run: |
-          cd ${{ env.SOLUTION_DIR }}/${{ env.API_PROJECT }}
-          dotnet ef database update --project ../${{ env.INFRASTRUCTURE_PROJECT }} --connection "${{ secrets.AZURE_SQL_CONNECTION }}"
+          cd ${{ env.API_PROJECT_DIR }}
+          dotnet ef database update --project ../${{ env.INFRASTRUCTURE_PROJECT_DIR }} --connection "${{ secrets.AZURE_SQL_CONNECTION }}"
           
   deploy:
     runs-on: windows-latest
