@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - sistemainventario
+name: Build, test, and deploy ASP.Net Core app to Azure Web App - sistemainventario
 
 on:
   push:
@@ -10,10 +7,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-test:  # Renombramos el job para reflejar que incluye tests
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -26,6 +23,16 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      - name: Run unit tests
+        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx" --no-build
+
+      - name: Publish test results
+        uses: actions/upload-artifact@v4
+        if: always()  # Sube resultados incluso si fallan
+        with:
+          name: test-results
+          path: "**/*.trx"
+
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
@@ -37,11 +44,12 @@ jobs:
 
   deploy:
     runs-on: windows-latest
-    needs: build
-    
+    needs: build-and-test  # Depende del job de build y tests
+    if: success()  # Solo se ejecuta si build-and-test es exitoso
+
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
@@ -57,7 +65,6 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224D895B4205AEF4549CA5AE2B2C }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'sistemainventario'
