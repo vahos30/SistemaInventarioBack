@@ -44,40 +44,37 @@ jobs:
 
   # Nuevo job para aplicar migraciones
   apply-migrations:
-    runs-on: windows-latest
-    needs: build-and-test
-    if: success()  # Solo ejecutar si los tests pasan
-    permissions:
-      id-token: write
-      contents: read
+  runs-on: windows-latest
+  needs: build-and-test
+  if: success()
+  permissions:
+    id-token: write
+    contents: read
 
-    steps:
-      - uses: actions/checkout@v4
+  steps:
+    - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
 
-      - name: Install EF Core CLI
-        run: dotnet tool install --global dotnet-ef
+    - name: Install EF Core CLI
+      run: dotnet tool install --global dotnet-ef
 
-      - name: Add .NET tools to PATH
-        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+    - name: Add .NET tools to PATH
+      run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5334F82F540041D38035098C5574F8F8 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4DBEE9F06EBA4B9B94109990E827EBC6 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224D895B4205AEF4549CA5AE2B2C }}
+    - name: Login to Azure
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5334F82F540041D38035098C5574F8F8 }}
+        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4DBEE9F06EBA4B9B94109990E827EBC6 }}
+        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224D895B4205AEF4549CA5AE2B2C }}
 
-      - name: Apply migrations
-        run: |
-          dotnet ef database update \
-          --project SistemaInventario.Infrastructure \
-          --connection "${{ secrets.AZURE_SQL_CONNECTION }}"
-        working-directory: SistemaInventario.API  # Ejecuta desde el proyecto API
+    - name: Apply migrations
+      run: dotnet ef database update --project SistemaInventario.Infrastructure --connection "${{ secrets.AZURE_SQL_CONNECTION }}"
+      working-directory: SistemaInventario.API
 
   deploy:
     runs-on: windows-latest
