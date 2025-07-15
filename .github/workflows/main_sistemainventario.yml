@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:  # Renombramos el job para reflejar que incluye tests
+  build-and-test:
     runs-on: windows-latest
     permissions:
       contents: read
@@ -28,7 +28,7 @@ jobs:
 
       - name: Publish test results
         uses: actions/upload-artifact@v4
-        if: always()  # Sube resultados incluso si fallan
+        if: always()
         with:
           name: test-results
           path: "**/*.trx"
@@ -42,10 +42,47 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
+  # Nuevo job para aplicar migraciones
+  apply-migrations:
+    runs-on: windows-latest
+    needs: build-and-test
+    if: success()  # Solo ejecutar si los tests pasan
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add .NET tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5334F82F540041D38035098C5574F8F8 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4DBEE9F06EBA4B9B94109990E827EBC6 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224D895B4205AEF4549CA5AE2B2C }}
+
+      - name: Apply migrations
+        run: |
+          dotnet ef database update \
+          --project SistemaInventario.Infrastructure \
+          --connection "${{ secrets.AZURE_SQL_CONNECTION }}"
+        working-directory: SistemaInventario.API  # Ejecuta desde el proyecto API
+
   deploy:
     runs-on: windows-latest
-    needs: build-and-test  # Depende del job de build y tests
-    if: success()  # Solo se ejecuta si build-and-test es exitoso
+    needs: [build-and-test, apply-migrations]  # Depende de ambos jobs
+    if: success()
 
     permissions:
       id-token: write
@@ -70,4 +107,3 @@ jobs:
           app-name: 'sistemainventario'
           slot-name: 'Production'
           package: .
-          
