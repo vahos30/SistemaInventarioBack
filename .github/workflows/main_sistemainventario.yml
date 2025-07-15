@@ -1,4 +1,4 @@
-name: Build, Test, Migrate and Deploy ASP.NET Core to Azure
+name: Build, Test and Deploy ASP.NET Core to Azure
 
 on:
   push:
@@ -7,9 +7,8 @@ on:
 
 env:
   DOTNET_VERSION: '8.0.x'
-  AZURE_WEBAPP_NAME: 'sisteminventario'
+  AZURE_WEBAPP_NAME: 'sistemainventario'
   AZURE_WEBAPP_PACKAGE_PATH: './publish_output'
-  PROJECT_PATH: 'SistemaInventario.API/SistemaInventario.API.csproj'  # Ruta exacta desde la raíz del repo
 
 jobs:
   build-and-test:
@@ -27,16 +26,16 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Restore dependencies
-      run: dotnet restore ${{ env.PROJECT_PATH }}
+      run: dotnet restore
 
     - name: Build with dotnet
-      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore
 
     - name: Run unit tests
-      run: dotnet test ${{ env.PROJECT_PATH }} --configuration Release --no-build --logger "trx;LogFileName=test_results.trx"
+      run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test_results.trx"
 
     - name: Publish application
-      run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      run: dotnet publish -c Release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -44,10 +43,10 @@ jobs:
         name: .net-app
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-  deploy-and-migrate:
+  deploy:
     runs-on: windows-latest
     needs: build-and-test
-    if: success()
+    if: success() # Solo si build-and-test pasa
 
     steps:
     - name: Download artifact
@@ -58,20 +57,10 @@ jobs:
     - name: Login to Azure
       uses: azure/login@v2
       with:
-        client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AB384FE0195F483CAC363F2ED0FA61BC }}
-        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AAFF828CE26A478B076BDE54F78EA5A9 }}
-        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_567F00F8705647F3A710612CBF722A61 }}
+        client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AB384FED195F483CAC363F2ED0FA61BC }}
+        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AAFF828CE26A4783B76BDE54F78EA5A9 }}
+        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_567F00F87D5647F3A710612CBE722A61 }}
 
-    - name: Install EF Core tools
-      run: dotnet tool install --global dotnet-ef
-
-    - name: Add dotnet tools to PATH
-      run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-
-    - name: Apply EF Core Migrations
-      run: |
-        dotnet ef database update --project ${{ env.PROJECT_PATH }} --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
-        
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v3
       with:
