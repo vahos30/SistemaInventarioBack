@@ -6,6 +6,11 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  SOLUTION_DIR: "SistemaInventarioSolution"
+  API_PROJECT: "SistemaInventario.API"
+  INFRASTRUCTURE_PROJECT: "SistemaInventario.Infrastructure"
+
 jobs:
   build-and-test:
     runs-on: windows-latest
@@ -15,16 +20,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_DIR }}/SistemaInventario.sln
 
-      - name: Run unit tests
-        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx" --no-build
+      - name: Build solution
+        run: dotnet build ${{ env.SOLUTION_DIR }}/SistemaInventario.sln --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test ${{ env.SOLUTION_DIR }}/SistemaInventario.sln --configuration Release --logger "trx;LogFileName=test-results.trx" --no-build
 
       - name: Publish test results
         uses: actions/upload-artifact@v4
@@ -33,10 +41,10 @@ jobs:
           name: test-results
           path: "**/*.trx"
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      - name: Publish API project
+        run: dotnet publish ${{ env.SOLUTION_DIR }}/${{ env.API_PROJECT }} -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
@@ -53,16 +61,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0.x'
 
       - name: Install EF Core CLI
         run: dotnet tool install --global dotnet-ef
 
-      - name: Add .NET tools to PATH
+      - name: Add dotnet tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Verify project structure
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "API project contents:"
+          ls -la ${{ env.SOLUTION_DIR }}/${{ env.API_PROJECT }}
+          echo "Infrastructure project contents:"
+          ls -la ${{ env.SOLUTION_DIR }}/${{ env.INFRASTRUCTURE_PROJECT }}
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -71,10 +88,11 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4DBEE9F06EBA4B9B94109990E827EBC6 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224D895B4205AEF4549CA5AE2B2C }}
 
-      - name: Apply migrations
-        run: dotnet ef database update --project SistemaInventario.Infrastructure --connection "${{ secrets.AZURE_SQL_CONNECTION }}"
-        working-directory: SistemaInventario.API
-
+      - name: Apply database migrations
+        run: |
+          cd ${{ env.SOLUTION_DIR }}/${{ env.API_PROJECT }}
+          dotnet ef database update --project ../${{ env.INFRASTRUCTURE_PROJECT }} --connection "${{ secrets.AZURE_SQL_CONNECTION }}"
+          
   deploy:
     runs-on: windows-latest
     needs: [build-and-test, apply-migrations]
@@ -85,7 +103,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: .net-app
