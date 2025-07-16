@@ -1,4 +1,5 @@
-name: Build, test, deploy ASP.NET Core app to Azure Web App - sistemainventario
+name: Build, test, and deploy ASP.Net Core app to Azure Web App - sistemainventario
+
 
 on:
   push:
@@ -6,108 +7,64 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  SOLUTION_FILE: "SistemaInventarioSolution.sln"
-  API_PROJECT_DIR: "SistemaInventario.API"
-  INFRASTRUCTURE_PROJECT_DIR: "SistemaInventario.Infrastructure"
 
 jobs:
-  build-and-test:
+  build-and-test:  # Renombramos el job para reflejar que incluye tests
     runs-on: windows-latest
     permissions:
       contents: read
 
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET 8
+
+      - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '8.x'
 
-      - name: Verificar archivo .sln
-        shell: bash
-        run: |
-          echo "=== Archivos en el repositorio ==="
-          ls -la
-          echo "=== Verificando archivo .sln ==="
-          if [ -f "${{ env.SOLUTION_FILE }}" ]; then
-            echo "Archivo de solución encontrado"
-          else
-            echo "ERROR: No se encontró ${{ env.SOLUTION_FILE }}"
-            exit 1
-          fi
 
-      - name: Restore dependencies
-        run: dotnet restore ${{ env.SOLUTION_FILE }}
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
 
-      - name: Build solution
-        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
 
-      - name: Run tests
-        run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --logger "trx;LogFileName=test-results.trx" --no-build
+      - name: Run unit tests
+        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx" --no-build
+
 
       - name: Publish test results
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always()  # Sube resultados incluso si fallan
         with:
           name: test-results
           path: "**/*.trx"
 
-      - name: Publish API project
-        run: dotnet publish ${{ env.API_PROJECT_DIR }} -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
-      - name: Upload artifact
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-  apply-migrations:
-    runs-on: windows-latest
-    needs: build-and-test
-    if: success()
-    permissions:
-      id-token: write
-      contents: read
 
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Install EF Core CLI
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Add dotnet tools to PATH
-        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5334F82F540041D38035098C5574F8F8 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4DBEE9F06EBA4B9B94109990E827EBC6 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224D895B4205AEF4549CA5AE2B2C }}
-
-      - name: Apply database migrations
-        run: |
-          cd ${{ env.API_PROJECT_DIR }}
-          dotnet ef database update --project ../${{ env.INFRASTRUCTURE_PROJECT_DIR }} --connection "${{ secrets.AZURE_SQL_CONNECTION }}"
-          
   deploy:
     runs-on: windows-latest
-    needs: [build-and-test, apply-migrations]
-    if: success()
+    needs: build-and-test  # Depende del job de build y tests
+    if: success()  # Solo se ejecuta si build-and-test es exitoso
+
 
     permissions:
       id-token: write
       contents: read
 
+
     steps:
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
@@ -119,9 +76,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4DBEE9F06EBA4B9B94109990E827EBC6 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224D895B4205AEF4549CA5AE2B2C }}
 
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'sistemainventario'
           slot-name: 'Production'
-          package: ${{env.DOTNET_ROOT}}/myapp
+          package: .
