@@ -25,7 +25,8 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Verify solution file
+      - name: Verificar archivo .sln
+        shell: bash
         run: |
           echo "=== Archivos en el repositorio ==="
           ls -la
@@ -123,4 +124,4 @@ jobs:
         with:
           app-name: 'sistemainventario'
           slot-name: 'Production'
-          package: .
+          package: ${{env.DOTNET_ROOT}}/myapp
