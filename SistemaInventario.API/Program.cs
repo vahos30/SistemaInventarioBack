@@ -26,15 +26,12 @@ builder.Services.AddControllers()
 // Configurar CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-
+        policy.WithOrigins("https://sistema-ventas.netlify.app")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
-
 });
 
 // Registrar DbContext
@@ -74,7 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowLocalhost");
+app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
