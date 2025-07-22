@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace SistemaInventario.Domain.Entities
 {
+    //Dfinición de la entidad Compra
     public class Compra
     {
         public Guid Id { get; set; } = Guid.NewGuid();
