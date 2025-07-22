@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SistemaInventario.Domain.Entities
 {
-    //Registrar un proveedor en el sistema
+    
     public class Proveedor
     {
         public Guid Id { get; set; } = Guid.NewGuid();
