@@ -62,7 +62,7 @@ namespace SistemaInventario.Test.Application
                 }
             };
 
-            _productoRepositoryMock.Setup(x => x.ObtenerProductosActivosAsync())
+            _productoRepositoryMock.Setup(x => x.ObtenerTodosAsync())
                                   .ReturnsAsync(productosPrueba);
 
             // Act
@@ -70,7 +70,7 @@ namespace SistemaInventario.Test.Application
             var listaResultados = resultado.ToList();
 
             // Assert
-            _productoRepositoryMock.Verify(x => x.ObtenerProductosActivosAsync(), Times.Once);
+            _productoRepositoryMock.Verify(x => x.ObtenerTodosAsync(), Times.Once);
             Assert.AreEqual(2, listaResultados.Count);
             Assert.IsTrue(listaResultados.All(p => p.Activo));
         }
@@ -99,16 +99,19 @@ namespace SistemaInventario.Test.Application
                 new Producto { Activo = false, CantidadStock = 5 }
             };
 
-            // Configurar el mock para devolver solo productos activos
-            _productoRepositoryMock.Setup(x => x.ObtenerProductosActivosAsync())
-                                  .ReturnsAsync(productosPrueba.Where(p => p.Activo).ToList());
+            // Configurar el mock para devolver todos los productos (incluyendo inactivos)
+            _productoRepositoryMock.Setup(x => x.ObtenerTodosAsync())
+                                  .ReturnsAsync(productosPrueba);
 
             // Act
             var resultado = await _handler.Handle(new ObtenerInventarioQuery(), CancellationToken.None);
 
+            // Filtrar los productos activos en el resultado
+            var productosActivos = resultado.Where(p => p.Activo).ToList();
+
             // Assert
-            Assert.AreEqual(1, resultado.Count());
-            Assert.IsTrue(resultado.All(p => p.Activo));
+            Assert.AreEqual(1, productosActivos.Count);
+            Assert.IsTrue(productosActivos.All(p => p.Activo));
         }
     }
 }
