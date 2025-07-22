@@ -1,72 +1,63 @@
-name: Build, test, and deploy ASP.Net Core app to Azure Web App - sistemainventario
+name: Build, test, and deploy ASP.Net Core app to Azure Web App
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build-and-test:
     runs-on: windows-latest
-    permissions:
-      contents: read
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up .NET Core
+      
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-
-      - name: Build with dotnet
+          
+      - name: Build
         run: dotnet build --configuration Release
-
-      - name: Run unit tests
-        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx" --no-build
-
-      - name: Publish test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: "**/*.trx"
-
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
-
-      - name: Upload artifact for deployment job
+        
+      - name: Test
+        run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+        
+      - name: Publish
+        run: dotnet publish -c Release -o ./publish
+        
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ./publish
 
   deploy:
     runs-on: windows-latest
     needs: build-and-test
-    if: success()
-
     permissions:
-      id-token: write  # Necesario para autenticación OIDC
+      id-token: write
       contents: read
-
+      
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-
+          
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5334F82F540041D38035098C5574F8F8 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_40BE69F06EBA489B94109990E827EBC6 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224089584205AEF4549CA5AE2B2C }}
-
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          # Si prefieres usar los secrets autogenerados:
+          # client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5334F82F540041D38035098C5574F8F8 }}
+          # tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_40BE69F06EBA489B94109990E827EBC6 }}
+          # subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9081224089584205AEF4549CA5AE2B2C }}
+          
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'sistemainventario'
           slot-name: 'Production'
-          package: .
+          package: ./
