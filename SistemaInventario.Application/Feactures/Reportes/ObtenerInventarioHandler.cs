@@ -27,10 +27,7 @@ namespace SistemaInventario.Application.Feactures.Reportes
             // Obtener todos los productos
             var productos = await _productoRepository.ObtenerTodosAsync();
 
-            // Filtrar solo productos activos
-            var productosActivos = await _productoRepository.ObtenerProductosActivosAsync();
-
-            return _mapper.Map<IEnumerable<ProductoDto>>(productosActivos);
+            return _mapper.Map<IEnumerable<ProductoDto>>(productos);
         }
     }
 }
