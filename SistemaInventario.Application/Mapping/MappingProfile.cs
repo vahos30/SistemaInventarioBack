@@ -30,6 +30,7 @@ namespace SistemaInventario.Application.Mapping
             CreateMap<DetalleRecibo, DetalleReciboDto>()
                 .ForMember(dest => dest.Subtotal, opt => opt.MapFrom(src =>
                     src.Subtotal))
+                .ForMember(dest => dest.ValorIva, opt => opt.MapFrom(src => src.ValorIva))
                 .ReverseMap(); 
         }
     }
