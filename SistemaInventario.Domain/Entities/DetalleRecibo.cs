@@ -31,6 +31,9 @@ namespace SistemaInventario.Domain.Entities
         // Valor del descuento (porcentaje o valor absoluto)
         public decimal? ValorDescuento { get; set; }
 
+        // Valor del IVA aplicado al producto (puede ser 0 si no aplica)
+        public decimal ValorIva { get; set; }
+
         // Subtotal con descuento aplicado
         public decimal Subtotal
         {

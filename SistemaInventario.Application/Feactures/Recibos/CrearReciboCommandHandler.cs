@@ -38,7 +38,15 @@ namespace SistemaInventario.Application.Feactures.Recibos
                 {
                     ClienteId = request.ClienteId,
                     Fecha = request.Fecha,
-                    Detalles = _mapper.Map<List<DetalleRecibo>>(request.Detalles)
+                    Detalles = request.Detalles.Select(item => new DetalleRecibo
+                    {
+                        ProductoId = item.ProductoId,
+                        Cantidad = item.Cantidad,
+                        PrecioUnitario = item.PrecioUnitario,
+                        TipoDescuento = item.TipoDescuento,
+                        ValorDescuento = item.ValorDescuento,
+                        ValorIva = item.ValorIva // <-- Aquí asignas el IVA recibido
+                    }).ToList()
                 };
 
                 await _reciboRepository.AgregarAsync(recibo);
