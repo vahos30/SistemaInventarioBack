@@ -32,6 +32,17 @@ namespace SistemaInventario.Application.Mapping
                     src.Subtotal))
                 .ForMember(dest => dest.ValorIva, opt => opt.MapFrom(src => src.ValorIva))
                 .ReverseMap(); 
+
+            CreateMap<Factura, FacturaDto>()
+                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Detalles.Sum(d => d.Subtotal)))
+                .ReverseMap();
+
+            CreateMap<DetalleFactura, DetalleFacturaDto>()
+                .ForMember(dest => dest.Subtotal, opt => opt.MapFrom(src => src.Subtotal))
+                .ReverseMap();
+
+            CreateMap<NotaCredito, NotaCreditoDto>().ReverseMap();
+            CreateMap<DetalleNotaCredito, DetalleNotaCreditoDto>().ReverseMap();
         }
     }
 }

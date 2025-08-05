@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SistemaInventario.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SistemaInventario.Infrastructure.Persistence;
 namespace SistemaInventario.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250804183643_CrearTablasFactura")]
+    partial class CrearTablasFactura
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,64 +24,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("DetalleNotaCredito", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("NotaCreditoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("ProductoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NotaCreditoId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("DetallesNotaCredito");
-                });
-
-            modelBuilder.Entity("NotaCredito", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FacturaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Motivo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NumeroNotaCredito")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacturaId")
-                        .IsUnique();
-
-                    b.ToTable("NotasCredito");
-                });
 
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Cliente", b =>
                 {
@@ -249,23 +194,11 @@ namespace SistemaInventario.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("Anulada")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("ClienteId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FechaAnulacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MotivoAnulacion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("NotaCreditoId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NumeroFactura")
                         .IsRequired()
@@ -366,36 +299,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                     b.ToTable("Recibos");
                 });
 
-            modelBuilder.Entity("DetalleNotaCredito", b =>
-                {
-                    b.HasOne("NotaCredito", "NotaCredito")
-                        .WithMany("Detalles")
-                        .HasForeignKey("NotaCreditoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SistemaInventario.Domain.Entities.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("NotaCredito");
-
-                    b.Navigation("Producto");
-                });
-
-            modelBuilder.Entity("NotaCredito", b =>
-                {
-                    b.HasOne("SistemaInventario.Domain.Entities.Factura", "Factura")
-                        .WithOne("NotaCredito")
-                        .HasForeignKey("NotaCredito", "FacturaId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Factura");
-                });
-
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Compra", b =>
                 {
                     b.HasOne("SistemaInventario.Domain.Entities.Proveedor", "Proveedor")
@@ -486,11 +389,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                     b.Navigation("Cliente");
                 });
 
-            modelBuilder.Entity("NotaCredito", b =>
-                {
-                    b.Navigation("Detalles");
-                });
-
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Cliente", b =>
                 {
                     b.Navigation("Recibos");
@@ -504,8 +402,6 @@ namespace SistemaInventario.Infrastructure.Migrations
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Factura", b =>
                 {
                     b.Navigation("Detalles");
-
-                    b.Navigation("NotaCredito");
                 });
 
             modelBuilder.Entity("SistemaInventario.Domain.Entities.Recibo", b =>

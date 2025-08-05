@@ -14,6 +14,10 @@ namespace SistemaInventario.Infrastructure.Persistence
         public DbSet<Proveedor> Proveedores { get; set; }
         public DbSet<Compra> Compras { get; set; }                 // <- Agregado
         public DbSet<DetalleCompra> DetallesCompra { get; set; }   // <- Agregado
+        public DbSet<Factura> Facturas { get; set; }
+        public DbSet<DetalleFactura> DetallesFactura { get; set; }
+        public DbSet<NotaCredito> NotasCredito { get; set; }
+        public DbSet<DetalleNotaCredito> DetallesNotaCredito { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,6 +29,10 @@ namespace SistemaInventario.Infrastructure.Persistence
             modelBuilder.Entity<Proveedor>().HasKey(p => p.Id);
             modelBuilder.Entity<Compra>().HasKey(c => c.Id);                // <- Agregado
             modelBuilder.Entity<DetalleCompra>().HasKey(d => d.Id);         // <- Agregado
+            modelBuilder.Entity<Factura>().HasKey(f => f.Id);
+            modelBuilder.Entity<DetalleFactura>().HasKey(d => d.Id);
+            modelBuilder.Entity<NotaCredito>().HasKey(nc => nc.Id);
+            modelBuilder.Entity<DetalleNotaCredito>().HasKey(d => d.Id);
 
             modelBuilder.Entity<Cliente>(entity =>
             {
@@ -80,6 +88,41 @@ namespace SistemaInventario.Infrastructure.Persistence
                 .WithMany()
                 .HasForeignKey(d => d.ProductoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación Factura -> Cliente
+            modelBuilder.Entity<Factura>()
+                .HasOne(f => f.Cliente)
+                .WithMany()
+                .HasForeignKey(f => f.ClienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación Factura -> DetallesFactura
+            modelBuilder.Entity<Factura>()
+                .HasMany(f => f.Detalles)
+                .WithOne(d => d.Factura)
+                .HasForeignKey(d => d.FacturaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relación DetalleFactura -> Producto
+            modelBuilder.Entity<DetalleFactura>()
+                .HasOne(d => d.Producto)
+                .WithMany()
+                .HasForeignKey(d => d.ProductoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación NotaCredito -> Factura
+            modelBuilder.Entity<NotaCredito>()
+                .HasOne(nc => nc.Factura)
+                .WithOne(f => f.NotaCredito)
+                .HasForeignKey<NotaCredito>(nc => nc.FacturaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación NotaCredito -> DetallesNotaCredito
+            modelBuilder.Entity<NotaCredito>()
+                .HasMany(nc => nc.Detalles)
+                .WithOne(d => d.NotaCredito)
+                .HasForeignKey(d => d.NotaCreditoId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
