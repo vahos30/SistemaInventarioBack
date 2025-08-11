@@ -22,15 +22,15 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-// Configurar CORS (Versión GitHub + localhost para desarrollo)
+// Configurar CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "https://sistema-ventas.netlify.app",
-                "https://sistemainventario-cpg5hbcpdacqaubk.centralus-01.azurewebsites.net")
-              .AllowAnyHeader()
+        policy.WithOrigins("https://sistema-ventas.netlify.app",
+            "https://sistemainventario-cpg5hbcpdacqaubk.centralus-01.azurewebsites.net"
+
+)             .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
@@ -39,23 +39,23 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Repositorios (Todos los tuyos locales)
+// Repositorios
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IReciboRepository, ReciboRepository>();
-builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>();
-builder.Services.AddScoped<ICompraRepository, CompraRepository>();
+builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>(); // <- Proveedor
+builder.Services.AddScoped<ICompraRepository, CompraRepository>();       // <- Compra
 builder.Services.AddScoped<IProductoRepository>(provider =>
     new ProductoRepositoryProxy(
         new ProductoRepository(provider.GetRequiredService<AppDbContext>()),
         provider.GetRequiredService<ILogger<ProductoRepositoryProxy>>()));
-builder.Services.AddScoped<IFacturaRepository, FacturaRepository>(); 
-builder.Services.AddScoped<INotaCreditoRepository, NotaCreditoRepository>(); 
+builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
+builder.Services.AddScoped<INotaCreditoRepository, NotaCreditoRepository>(); // <-- AGREGA ESTA LÍNEA
 
-// Servicios de aplicación
+// Servicios de aplicación (Opcional, pero recomendado)
 builder.Services.AddScoped<ProveedorService>();
 builder.Services.AddScoped<CompraService>();
 
-// MediatR (Todos tus handlers locales)
+// MediatR
 builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(CrearReciboCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(CrearFacturaCommandHandler).Assembly);
@@ -69,7 +69,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Migración de base de datos
+// migracones a la base de datos
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
@@ -91,7 +91,7 @@ app.UseAuthorization();
 app.MapControllers();
 await app.RunAsync();
 
-// Converter para DateTime (igual en ambos)
+// Agrega la clase en un namespace con nombre
 namespace Converters
 {
     using System;
@@ -111,6 +111,7 @@ namespace Converters
         }
     }
 }
+
 
 
 
