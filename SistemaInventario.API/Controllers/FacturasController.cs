@@ -47,4 +47,11 @@ public class FacturasController : ControllerBase
         await _mediator.Send(new AnularFacturaCommand { FacturaId = id, Motivo = motivo });
         return NoContent();
     }
+
+    [HttpGet("anuladas")]
+    public async Task<IActionResult> GetFacturasAnuladas([FromServices] IMediator mediator)
+    {
+        var result = await mediator.Send(new ObtenerFacturasAnuladasQuery());
+        return Ok(result);
+    }
 }
