@@ -52,6 +52,7 @@ public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, F
                 NumeroFactura = $"F{siguienteNumero}",
                 ClienteId = request.ClienteId,
                 Fecha = request.Fecha,
+                FormaPago = request.FormaPago,
                 Detalles = _mapper.Map<List<DetalleFactura>>(request.Detalles)
             };
 

@@ -25,6 +25,9 @@ namespace SistemaInventario.Domain.Entities
 
         // Total con descuentos aplicados
         public decimal Total => Detalles.Sum(d => d.Subtotal);
+
+        // Forma de pago utilizada en el recibo.
+        public string FormaPago { get; set; } = string.Empty;
     }
 }
 

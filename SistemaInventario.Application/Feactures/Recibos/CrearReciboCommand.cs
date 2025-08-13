@@ -20,5 +20,7 @@ namespace SistemaInventario.Application.Feactures.Recibos
         public List<DetalleReciboDto> Detalles { get; set; } = new();
 
         public decimal ValorIva { get; set; }
+
+        public string FormaPago { get; set; } = string.Empty;
     }
 }
