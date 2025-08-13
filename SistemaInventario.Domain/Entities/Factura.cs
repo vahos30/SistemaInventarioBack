@@ -20,5 +20,6 @@ namespace SistemaInventario.Domain.Entities
         public DateTime? FechaAnulacion { get; set; }
         public Guid? NotaCreditoId { get; set; }
         public NotaCredito? NotaCredito { get; set; }
+        public string FormaPago { get; set; } = string.Empty;
     }
 }

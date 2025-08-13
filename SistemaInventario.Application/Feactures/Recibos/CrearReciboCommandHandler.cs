@@ -46,7 +46,8 @@ namespace SistemaInventario.Application.Feactures.Recibos
                         TipoDescuento = item.TipoDescuento,
                         ValorDescuento = item.ValorDescuento,
                         ValorIva = item.ValorIva // <-- Aquí asignas el IVA recibido
-                    }).ToList()
+                    }).ToList(),
+                    FormaPago = request.FormaPago
                 };
 
                 await _reciboRepository.AgregarAsync(recibo);

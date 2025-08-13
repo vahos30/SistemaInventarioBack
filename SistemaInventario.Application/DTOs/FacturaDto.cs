@@ -11,5 +11,6 @@ namespace SistemaInventario.Application.DTOs
         public DateTime Fecha { get; set; }
         public decimal Total { get; set; }
         public List<DetalleFacturaDto> Detalles { get; set; } = new();
+        public string FormaPago { get; set; } = string.Empty;
     }
 }
