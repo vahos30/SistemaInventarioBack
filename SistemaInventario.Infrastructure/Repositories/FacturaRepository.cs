@@ -42,6 +42,14 @@ namespace SistemaInventario.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Factura>> ObtenerFacturasPorClienteAsync(Guid clienteId)
+        {
+            return await _context.Facturas
+                .Include(f => f.Detalles)
+                .Where(f => f.ClienteId == clienteId)
+                .ToListAsync();
+        }
+
         public async Task EliminarAsync(Guid id)
         {
             var factura = await _context.Facturas

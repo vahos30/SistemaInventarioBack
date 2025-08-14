@@ -31,16 +31,16 @@ namespace SistemaInventario.API.Controllers
         }
 
         /// <summary>
-        /// Obtiene todos los recibos (ventas) asociados a un cliente específico.
+        /// Obtiene todos los recibos y facturas (ventas) asociados a un cliente específico.
         /// Endpoint: GET /api/reportes/cliente/{clienteId}
         /// </summary>
         /// <param name="clienteId">Identificador del cliente.</param>
         [HttpGet("cliente/{clienteId}")]
-        public async Task<IActionResult> ObtenerRecibosPorCliente(Guid clienteId)
+        public async Task<IActionResult> ObtenerVentasPorCliente(Guid clienteId)
         {
-            var query = new ObtenerRecibosPorClienteQuery(clienteId);
-            var recibos = await _mediator.Send(query);
-            return Ok(recibos);
+            var query = new ObtenerVentasPorClienteQuery(clienteId);
+            var ventas = await _mediator.Send(query);
+            return Ok(ventas);
         }
 
         /// <summary>
