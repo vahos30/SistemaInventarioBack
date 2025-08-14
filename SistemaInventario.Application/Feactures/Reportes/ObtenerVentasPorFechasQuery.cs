@@ -8,7 +8,17 @@ using SistemaInventario.Application.DTOs;
 
 namespace SistemaInventario.Application.Feactures.Reportes
 {
-    public record ObtenerVentasPorFechasQuery(DateTime FechaInicio, DateTime FechaFin): IRequest<IEnumerable<ReciboDto>>;
+    public class ObtenerVentasPorFechasQuery : IRequest<VentasPorFechasDto>
+    {
+        public DateTime FechaInicio { get; }
+        public DateTime FechaFin { get; }
+
+        public ObtenerVentasPorFechasQuery(DateTime fechaInicio, DateTime fechaFin)
+        {
+            FechaInicio = fechaInicio;
+            FechaFin = fechaFin;
+        }
+    }
 
 
 }

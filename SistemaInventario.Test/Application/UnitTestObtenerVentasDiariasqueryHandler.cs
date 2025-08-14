@@ -17,6 +17,7 @@ namespace SistemaInventario.Test.Application
     public class UnitTestObtenerVentasDiariasQueryHandler
     {
         private Mock<IReciboRepository> _reciboRepositoryMock;
+        private Mock<IFacturaRepository> _facturaRepositoryMock;
         private IMapper _mapper;
         private ObtenerVentasDiariasHandler _handler;
 
@@ -24,6 +25,7 @@ namespace SistemaInventario.Test.Application
         public void Setup()
         {
             _reciboRepositoryMock = new Mock<IReciboRepository>();
+            _facturaRepositoryMock = new Mock<IFacturaRepository>();
 
             // Configuración completa de AutoMapper
             var config = new MapperConfiguration(cfg =>
@@ -37,10 +39,11 @@ namespace SistemaInventario.Test.Application
                 cfg.CreateMap<DetalleRecibo, DetalleReciboDto>()
                     .ForMember(dest => dest.ProductoId, opt => opt.MapFrom(src =>
                         src.Producto.Id)); // Mapear ProductoId desde la relación
+                // Si tienes mapeo para Factura y FacturaDto, agrégalo aquí
             });
 
             _mapper = config.CreateMapper();
-            _handler = new ObtenerVentasDiariasHandler(_reciboRepositoryMock.Object, _mapper);
+            _handler = new ObtenerVentasDiariasHandler(_reciboRepositoryMock.Object, _facturaRepositoryMock.Object, _mapper);
         }
 
         [TestMethod]
@@ -84,11 +87,15 @@ namespace SistemaInventario.Test.Application
             _reciboRepositoryMock.Setup(x => x.ObtenerVentasDiariasAsync(It.IsAny<DateTime?>()))
                 .ReturnsAsync(resultadoEsperado);
 
+            // Simula que no hay facturas diarias
+            _facturaRepositoryMock.Setup(x => x.ObtenerFacturasDiariasAsync(It.IsAny<DateTime?>()))
+                .ReturnsAsync(new List<Factura>());
+
             var query = new ObtenerVentasDiariasQuery();
 
             // Act
             var resultado = await _handler.Handle(query, CancellationToken.None);
-            var reciboMapeado = resultado.First();
+            var reciboMapeado = resultado.Recibos.First();
 
             // Assert
             Assert.AreEqual(1300m, reciboMapeado.Total); // (2*500) + (1*300)
@@ -117,11 +124,14 @@ namespace SistemaInventario.Test.Application
             _reciboRepositoryMock.Setup(x => x.ObtenerVentasDiariasAsync(It.IsAny<DateTime?>()))
                 .ReturnsAsync(resultadoEsperado);
 
+            _facturaRepositoryMock.Setup(x => x.ObtenerFacturasDiariasAsync(It.IsAny<DateTime?>()))
+                .ReturnsAsync(new List<Factura>());
+
             // Act
             var resultado = await _handler.Handle(new ObtenerVentasDiariasQuery(), CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(0m, resultado.First().Total);
+            Assert.AreEqual(0m, resultado.Recibos.First().Total);
         }
     }
 }
