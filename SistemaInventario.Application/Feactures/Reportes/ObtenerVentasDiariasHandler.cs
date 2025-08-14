@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,22 +8,29 @@ using SistemaInventario.Domain.Interfaces;
 
 namespace SistemaInventario.Application.Feactures.Reportes
 {
-    public class ObtenerVentasDiariasHandler : IRequestHandler<ObtenerVentasDiariasQuery, IEnumerable<ReciboDto>>
+    public class ObtenerVentasDiariasHandler : IRequestHandler<ObtenerVentasDiariasQuery, VentasDiariasDto>
     {
         private readonly IReciboRepository _reciboRepository;
+        private readonly IFacturaRepository _facturaRepository;
         private readonly IMapper _mapper;
 
-        public ObtenerVentasDiariasHandler(IReciboRepository reciboRepository, IMapper mapper)
+        public ObtenerVentasDiariasHandler(IReciboRepository reciboRepository, IFacturaRepository facturaRepository, IMapper mapper)
         {
             _reciboRepository = reciboRepository;
+            _facturaRepository = facturaRepository;
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ReciboDto>> Handle(ObtenerVentasDiariasQuery request, CancellationToken cancellationToken)
+        public async Task<VentasDiariasDto> Handle(ObtenerVentasDiariasQuery request, CancellationToken cancellationToken)
         {
-            // Pasamos null para fechaReferencia (o request.FechaReferencia si el query lo tiene)
-            var result = await _reciboRepository.ObtenerVentasDiariasAsync(null);
-            return _mapper.Map<IEnumerable<ReciboDto>>(result.Recibos);
+            var recibosResult = await _reciboRepository.ObtenerVentasDiariasAsync(null);
+            var facturas = await _facturaRepository.ObtenerFacturasDiariasAsync(null);
+
+            return new VentasDiariasDto
+            {
+                Recibos = _mapper.Map<List<ReciboDto>>(recibosResult.Recibos),
+                Facturas = _mapper.Map<List<FacturaDto>>(facturas)
+            };
         }
     }
 }

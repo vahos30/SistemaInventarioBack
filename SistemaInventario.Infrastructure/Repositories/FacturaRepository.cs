@@ -50,6 +50,25 @@ namespace SistemaInventario.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Factura>> ObtenerFacturasDiariasAsync(DateTime? fechaReferencia)
+        {
+            var hoy = fechaReferencia?.Date ?? DateTime.UtcNow.Date;
+            var fin = hoy.AddDays(1);
+
+            return await _context.Facturas
+                .Include(f => f.Detalles)
+                .Where(f => f.Fecha >= hoy && f.Fecha < fin)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Factura>> ObtenerFacturasPorFechaAsync(DateTime fechaInicio, DateTime fechaFin)
+        {
+            return await _context.Facturas
+                .Include(f => f.Detalles)
+                .Where(f => f.Fecha >= fechaInicio && f.Fecha <= fechaFin)
+                .ToListAsync();
+        }
+
         public async Task EliminarAsync(Guid id)
         {
             var factura = await _context.Facturas

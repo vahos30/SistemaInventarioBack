@@ -10,7 +10,8 @@ namespace SistemaInventario.Application.Feactures.Reportes
 /// <summary>
 /// QUERY para obtener las ventas diarias (Recibos).
 {
-    public record ObtenerVentasDiariasQuery() : IRequest<IEnumerable<ReciboDto>>;
-
-
+    public class ObtenerVentasDiariasQuery : IRequest<VentasDiariasDto>
+    {
+        // Si necesitas parámetros, agrégalos aquí
+    }
 }
