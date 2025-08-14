@@ -8,6 +8,7 @@ public interface IFacturaRepository
     Task AgregarAsync(Factura factura);
     Task<Factura?> ObtenerPorIdAsync(Guid id);
     Task<IEnumerable<Factura>> ObtenerFacturasAsync();
+    Task<IEnumerable<Factura>> ObtenerFacturasPorClienteAsync(Guid clienteId);
     Task EliminarAsync(Guid id);
     Task ActualizarAsync(Factura factura);
 }
