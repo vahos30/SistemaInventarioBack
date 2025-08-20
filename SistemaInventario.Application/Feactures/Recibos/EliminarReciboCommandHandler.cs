@@ -27,7 +27,15 @@ public class EliminarReciboCommandHandler : IRequestHandler<EliminarReciboComman
             var producto = await _productoRepository.ObtenerPorIdsync(detalle.ProductoId);
             if (producto != null)
             {
+                int stockAnterior = producto.CantidadStock;
                 producto.CantidadStock += detalle.Cantidad;
+
+                // Si el stock era 0 y ahora es mayor que 0, activar el producto
+                if (stockAnterior == 0 && producto.CantidadStock > 0)
+                {
+                    producto.Activo = true;
+                }
+
                 await _productoRepository.ActualizarAsync(producto);
             }
         }
