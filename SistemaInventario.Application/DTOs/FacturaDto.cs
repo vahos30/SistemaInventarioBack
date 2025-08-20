@@ -12,5 +12,6 @@ namespace SistemaInventario.Application.DTOs
         public decimal Total { get; set; }
         public List<DetalleFacturaDto> Detalles { get; set; } = new();
         public string FormaPago { get; set; } = string.Empty;
+        public bool Anulada { get; set; } 
     }
 }

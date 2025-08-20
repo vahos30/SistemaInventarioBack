@@ -35,6 +35,7 @@ namespace SistemaInventario.Application.Mapping
 
             CreateMap<Factura, FacturaDto>()
                 .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Detalles.Sum(d => d.Subtotal)))
+                .ForMember(dest => dest.Anulada, opt => opt.MapFrom(src => src.Anulada))
                 .ReverseMap();
 
             CreateMap<DetalleFactura, DetalleFacturaDto>()
