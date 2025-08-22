@@ -41,6 +41,7 @@ namespace SistemaInventario.Application.Feactures.Recibos
                 {
                     ClienteId = request.ClienteId,
                     Fecha = fechaColombia,
+                    FormaPago = request.FormaPago,
                     Detalles = _mapper.Map<List<DetalleRecibo>>(request.Detalles)
                 };
 
