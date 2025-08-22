@@ -47,11 +47,14 @@ public class CrearFacturaCommandHandler : IRequestHandler<CrearFacturaCommand, F
             if (siguienteNumero > 1500)
                 throw new Exception("Se ha alcanzado el límite de numeración de facturas.");
 
+            var colombiaZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+            var fechaColombia = TimeZoneInfo.ConvertTime(request.Fecha, colombiaZone);
+
             var factura = new Factura
             {
                 NumeroFactura = $"F{siguienteNumero}",
                 ClienteId = request.ClienteId,
-                Fecha = request.Fecha,
+                Fecha = fechaColombia,
                 FormaPago = request.FormaPago,
                 Detalles = _mapper.Map<List<DetalleFactura>>(request.Detalles)
             };
