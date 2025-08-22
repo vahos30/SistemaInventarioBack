@@ -33,21 +33,15 @@ namespace SistemaInventario.Application.Feactures.Recibos
 
             try
             {
+                var colombiaZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+                var fechaColombia = TimeZoneInfo.ConvertTime(request.Fecha, colombiaZone);
+
                 // Mapear y crear el recibo
                 var recibo = new Recibo
                 {
                     ClienteId = request.ClienteId,
-                    Fecha = request.Fecha,
-                    Detalles = request.Detalles.Select(item => new DetalleRecibo
-                    {
-                        ProductoId = item.ProductoId,
-                        Cantidad = item.Cantidad,
-                        PrecioUnitario = item.PrecioUnitario,
-                        TipoDescuento = item.TipoDescuento,
-                        ValorDescuento = item.ValorDescuento,
-                        ValorIva = item.ValorIva // <-- Aquí asignas el IVA recibido
-                    }).ToList(),
-                    FormaPago = request.FormaPago
+                    Fecha = fechaColombia,
+                    Detalles = _mapper.Map<List<DetalleRecibo>>(request.Detalles)
                 };
 
                 await _reciboRepository.AgregarAsync(recibo);

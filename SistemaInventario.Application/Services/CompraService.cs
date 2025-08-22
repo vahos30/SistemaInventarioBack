@@ -52,7 +52,11 @@ namespace SistemaInventario.Application.Services
             }
 
             compra.Total = total;
-            compra.Fecha = DateTime.UtcNow;
+
+            // Convertir la fecha a la zona horaria de Colombia antes de guardar
+            var colombiaZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+            var fechaColombia = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, colombiaZone);
+            compra.Fecha = fechaColombia;
 
             await _compraRepository.AgregarAsync(compra);
         }
