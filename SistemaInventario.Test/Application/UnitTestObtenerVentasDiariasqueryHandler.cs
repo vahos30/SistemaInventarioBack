@@ -38,8 +38,15 @@ namespace SistemaInventario.Test.Application
                 // Mapeo del detalle
                 cfg.CreateMap<DetalleRecibo, DetalleReciboDto>()
                     .ForMember(dest => dest.ProductoId, opt => opt.MapFrom(src =>
-                        src.Producto.Id)); // Mapear ProductoId desde la relación
-                // Si tienes mapeo para Factura y FacturaDto, agrégalo aquí
+                        src.Producto.Id));
+
+                // Mapeo para Factura y FacturaDto
+                cfg.CreateMap<Factura, FacturaDto>()
+                    .ForMember(dest => dest.Total, opt => opt.MapFrom(src =>
+                        src.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario)));
+                cfg.CreateMap<DetalleFactura, DetalleFacturaDto>()
+                    .ForMember(dest => dest.ProductoId, opt => opt.MapFrom(src =>
+                        src.Producto.Id));
             });
 
             _mapper = config.CreateMapper();
@@ -59,7 +66,7 @@ namespace SistemaInventario.Test.Application
             var reciboPrueba = new Recibo
             {
                 Id = Guid.NewGuid(),
-                Fecha = DateTime.UtcNow,  // Suponemos que es la fecha de hoy
+                Fecha = DateTime.UtcNow,
                 Detalles = new List<DetalleRecibo>
                 {
                     new DetalleRecibo
@@ -79,26 +86,22 @@ namespace SistemaInventario.Test.Application
                 }
             };
 
-            // Calcula el total esperado (2*500 + 1*300 = 1300)
-            decimal totalEsperado = reciboPrueba.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
-            var resultadoEsperado = (Recibos: (IEnumerable<Recibo>)new List<Recibo> { reciboPrueba }, Total: totalEsperado);
+            _reciboRepositoryMock.Setup(x => x.ObtenerVentasPorFechaAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ReturnsAsync(new List<Recibo> { reciboPrueba });
 
-            // Ahora pasamos un argumento al método: It.IsAny<DateTime?>() o null.
-            _reciboRepositoryMock.Setup(x => x.ObtenerVentasDiariasAsync(It.IsAny<DateTime?>()))
-                .ReturnsAsync(resultadoEsperado);
-
-            // Simula que no hay facturas diarias
-            _facturaRepositoryMock.Setup(x => x.ObtenerFacturasDiariasAsync(It.IsAny<DateTime?>()))
+            _facturaRepositoryMock.Setup(x => x.ObtenerFacturasPorFechaAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(new List<Factura>());
 
             var query = new ObtenerVentasDiariasQuery();
 
             // Act
             var resultado = await _handler.Handle(query, CancellationToken.None);
-            var reciboMapeado = resultado.Recibos.First();
 
             // Assert
-            Assert.AreEqual(1300m, reciboMapeado.Total); // (2*500) + (1*300)
+            Assert.IsTrue(resultado.Recibos.Any(), "No se retornaron recibos mapeados.");
+            var reciboMapeado = resultado.Recibos.First();
+
+            Assert.AreEqual(1300m, reciboMapeado.Total);
             Assert.AreEqual(reciboPrueba.Id, reciboMapeado.Id);
             Assert.AreEqual(reciboPrueba.Fecha, reciboMapeado.Fecha);
             Assert.AreEqual(2, reciboMapeado.Detalles.Count);
@@ -119,19 +122,68 @@ namespace SistemaInventario.Test.Application
                 Detalles = new List<DetalleRecibo>()
             };
 
-            var resultadoEsperado = (Recibos: (IEnumerable<Recibo>)new List<Recibo> { reciboVacio }, Total: 0m);
+            _reciboRepositoryMock.Setup(x => x.ObtenerVentasPorFechaAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ReturnsAsync(new List<Recibo> { reciboVacio });
 
-            _reciboRepositoryMock.Setup(x => x.ObtenerVentasDiariasAsync(It.IsAny<DateTime?>()))
-                .ReturnsAsync(resultadoEsperado);
-
-            _facturaRepositoryMock.Setup(x => x.ObtenerFacturasDiariasAsync(It.IsAny<DateTime?>()))
+            _facturaRepositoryMock.Setup(x => x.ObtenerFacturasPorFechaAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(new List<Factura>());
 
             // Act
             var resultado = await _handler.Handle(new ObtenerVentasDiariasQuery(), CancellationToken.None);
 
             // Assert
+            Assert.IsTrue(resultado.Recibos.Any(), "No se retornaron recibos mapeados.");
             Assert.AreEqual(0m, resultado.Recibos.First().Total);
+        }
+
+        [TestMethod]
+        public async Task Handle_DeberiaRetornarFacturasDiariasMapeadas()
+        {
+            // Arrange
+            var productoEjemplo = new Producto
+            {
+                Id = Guid.NewGuid(),
+                Nombre = "Monitor"
+            };
+
+            var facturaPrueba = new Factura
+            {
+                Id = Guid.NewGuid(),
+                Fecha = DateTime.UtcNow,
+                Detalles = new List<DetalleFactura>
+                {
+                    new DetalleFactura
+                    {
+                        Id = Guid.NewGuid(),
+                        Cantidad = 1,
+                        PrecioUnitario = 800m,
+                        Producto = productoEjemplo
+                    }
+                }
+            };
+
+            _reciboRepositoryMock.Setup(x => x.ObtenerVentasPorFechaAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ReturnsAsync(new List<Recibo>());
+
+            _facturaRepositoryMock.Setup(x => x.ObtenerFacturasPorFechaAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ReturnsAsync(new List<Factura> { facturaPrueba });
+
+            var query = new ObtenerVentasDiariasQuery();
+
+            // Act
+            var resultado = await _handler.Handle(query, CancellationToken.None);
+
+            // Assert
+            Assert.IsTrue(resultado.Facturas.Any(), "No se retornaron facturas mapeadas.");
+            var facturaMapeada = resultado.Facturas.First();
+            Assert.AreEqual(facturaPrueba.Id, facturaMapeada.Id);
+            Assert.AreEqual(facturaPrueba.Fecha, facturaMapeada.Fecha);
+            Assert.AreEqual(800m, facturaMapeada.Total);
+            Assert.AreEqual(1, facturaMapeada.Detalles.Count);
+            var primerDetalle = facturaMapeada.Detalles[0];
+            Assert.AreEqual(productoEjemplo.Id, primerDetalle.ProductoId);
+            Assert.AreEqual(800m, primerDetalle.PrecioUnitario);
+            Assert.AreEqual(1, primerDetalle.Cantidad);
         }
     }
 }
