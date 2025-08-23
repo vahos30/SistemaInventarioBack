@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -23,12 +24,20 @@ namespace SistemaInventario.Application.Feactures.Reportes
 
         public async Task<VentasDiariasDto> Handle(ObtenerVentasDiariasQuery request, CancellationToken cancellationToken)
         {
-            var recibosResult = await _reciboRepository.ObtenerVentasDiariasAsync(null);
-            var facturas = await _facturaRepository.ObtenerFacturasDiariasAsync(null);
+            // Obtener la fecha actual en la zona de Colombia
+            var colombiaZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+            var fechaColombia = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, colombiaZone);
+
+            // Calcular el rango de hoy en Colombia
+            var fechaInicio = fechaColombia.Date;
+            var fechaFin = fechaInicio.AddDays(1);
+
+            var recibosResult = await _reciboRepository.ObtenerVentasPorFechaAsync(fechaInicio, fechaFin);
+            var facturas = await _facturaRepository.ObtenerFacturasPorFechaAsync(fechaInicio, fechaFin);
 
             return new VentasDiariasDto
             {
-                Recibos = _mapper.Map<List<ReciboDto>>(recibosResult.Recibos),
+                Recibos = _mapper.Map<List<ReciboDto>>(recibosResult),
                 Facturas = _mapper.Map<List<FacturaDto>>(facturas)
             };
         }
