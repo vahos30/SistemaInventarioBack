@@ -11,6 +11,11 @@ using SistemaInventario.Application.Feactures.Recibos;
 using System.Text.Json.Serialization;
 using SistemaInventario.Application.Services;
 using SistemaInventario.Domain.Interfaces.SistemaInventario.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using SistemaInventario.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +33,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins("https://sistema-ventas.netlify.app",
-            "https://sistemainventario-cpg5hbcpdacqaubk.centralus-01.azurewebsites.net"
-
-)             .AllowAnyHeader()
+            "https://sistemainventario-cpg5hbcpdacqaubk.centralus-01.azurewebsites.net")
+              .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
@@ -67,6 +71,26 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddIdentity<Usuario, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
 var app = builder.Build();
 
 // migracones a la base de datos
@@ -76,6 +100,25 @@ using (var scope = app.Services.CreateScope())
     if (dbContext.Database.IsRelational())
     {
         dbContext.Database.Migrate();
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Usuario>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    // Crear el rol Administrador si no existe
+    if (!await roleManager.RoleExistsAsync("Administrador"))
+        await roleManager.CreateAsync(new IdentityRole("Administrador"));
+
+    // Crear el usuario administrador si no existe
+    var adminUser = await userManager.FindByNameAsync("admin");
+    if (adminUser == null)
+    {
+        adminUser = new Usuario { UserName = "admin", Email = "admin@correo.com" };
+        await userManager.CreateAsync(adminUser, "TuContraseñaSegura123!");
+        await userManager.AddToRoleAsync(adminUser, "Administrador");
     }
 }
 

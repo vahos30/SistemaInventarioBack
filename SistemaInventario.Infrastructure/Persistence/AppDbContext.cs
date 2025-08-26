@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using SistemaInventario.Domain.Entities;
 
 namespace SistemaInventario.Infrastructure.Persistence
 {
-    public class AppDbContext : DbContext
+    // Cambia DbContext por IdentityDbContext<Usuario>
+    public class AppDbContext : IdentityDbContext<Usuario>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -12,8 +14,8 @@ namespace SistemaInventario.Infrastructure.Persistence
         public DbSet<Recibo> Recibos { get; set; }
         public DbSet<DetalleRecibo> DetallesRecibo { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
-        public DbSet<Compra> Compras { get; set; }                 // <- Agregado
-        public DbSet<DetalleCompra> DetallesCompra { get; set; }   // <- Agregado
+        public DbSet<Compra> Compras { get; set; }
+        public DbSet<DetalleCompra> DetallesCompra { get; set; }
         public DbSet<Factura> Facturas { get; set; }
         public DbSet<DetalleFactura> DetallesFactura { get; set; }
         public DbSet<NotaCredito> NotasCredito { get; set; }
@@ -21,6 +23,9 @@ namespace SistemaInventario.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Llama primero a la configuración base de Identity
+            base.OnModelCreating(modelBuilder);
+
             // Configuración de claves
             modelBuilder.Entity<Cliente>().HasKey(c => c.Id);
             modelBuilder.Entity<Producto>().HasKey(p => p.Id);
