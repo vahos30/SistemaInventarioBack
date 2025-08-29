@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SistemaInventario.Application.DTOs;
 using SistemaInventario.Domain.Entities;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -83,5 +84,26 @@ public class UsuariosController : ControllerBase
         }
 
         return Ok(usuariosConRoles);
+    }
+
+    [HttpGet("mi-perfil")]
+    [Authorize]
+    public async Task<IActionResult> MiPerfil()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+            return Unauthorized();
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+            return NotFound("Usuario no encontrado.");
+
+        var roles = await _userManager.GetRolesAsync(user);
+        return Ok(new {
+            user.Id,
+            user.UserName,
+            user.Email,
+            Roles = roles
+        });
     }
 }

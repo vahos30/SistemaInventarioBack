@@ -34,6 +34,7 @@ public class AuthController : ControllerBase
 
         var claims = new List<Claim>
         {
+            new Claim(ClaimTypes.NameIdentifier, user.Id), // <-- AGREGAR ESTE CLAIM
             new Claim(ClaimTypes.Name, user.UserName)
         };
         claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
@@ -47,5 +48,35 @@ public class AuthController : ControllerBase
             signingCredentials: creds);
 
         return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+    }
+
+    // 1. Solicitar token de recuperación
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return BadRequest("Usuario no encontrado.");
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        // Para pruebas, devuelve el token en la respuesta.
+        // En producción, deberías enviarlo por email.
+        return Ok(new { token });
+    }
+
+    // 2. Restablecer la contraseña
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null)
+            return BadRequest("Usuario no encontrado.");
+
+        var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
+
+        return Ok("Contraseña restablecida correctamente.");
     }
 }
