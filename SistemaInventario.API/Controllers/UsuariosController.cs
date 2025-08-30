@@ -48,10 +48,17 @@ public class UsuariosController : ControllerBase
         var result = await _userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded)
-            return BadRequest(result.Errors);
+        {
+            var errores = result.Errors.Select(e =>
+                e.Code == "DuplicateUserName"
+                    ? "El nombre de usuario ya está registrado."
+                    : e.Description
+            ).ToList();
+            return BadRequest(new { errores });
+        }
 
         await _userManager.AddToRoleAsync(user, "Vendedor");
-        return Ok("Vendedor creado correctamente");
+        return Ok(new { mensaje = "Vendedor creado correctamente" });
     }
 
     // Endpoint para listar usuarios (solo administradores)
