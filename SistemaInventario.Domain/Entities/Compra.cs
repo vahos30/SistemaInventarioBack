@@ -12,5 +12,6 @@ namespace SistemaInventario.Domain.Entities
         public DateTime Fecha { get; set; } = DateTime.UtcNow;
         public decimal Total { get; set; }
         public ICollection<DetalleCompra> Detalles { get; set; } = new List<DetalleCompra>();
+        public string Estado { get; set; } = "Activa";
     }
 }

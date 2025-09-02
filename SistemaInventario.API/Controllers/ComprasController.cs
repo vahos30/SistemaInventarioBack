@@ -70,5 +70,15 @@ namespace SistemaInventario.Web.Controllers
             await _compraService.EliminarAsync(id);
             return NoContent();
         }
+
+        [HttpPost("{id}/anular-parcial")]
+        public async Task<IActionResult> AnularParcial(Guid id, [FromBody] CompraAnulacionParcialDto dto)
+        {
+            if (id != dto.CompraId)
+                return BadRequest("ID mismatch");
+
+            await _compraService.AnularParcialAsync(dto);
+            return NoContent();
+        }
     }
 }

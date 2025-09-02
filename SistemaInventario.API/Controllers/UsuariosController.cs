@@ -52,7 +52,15 @@ public class UsuariosController : ControllerBase
             var errores = result.Errors.Select(e =>
                 e.Code == "DuplicateUserName"
                     ? "El nombre de usuario ya está registrado."
-                    : e.Description
+                : e.Code == "PasswordRequiresNonAlphanumeric"
+                    ? "La contraseña debe tener al menos un carácter especial (no alfanumérico)."
+                : e.Code == "PasswordRequiresUpper"
+                    ? "La contraseña debe tener al menos una letra mayúscula."
+                : e.Code == "PasswordRequiresDigit"
+                    ? "La contraseña debe tener al menos un número."
+                : e.Code == "PasswordTooShort"
+                    ? "La contraseña es demasiado corta."
+                : e.Description 
             ).ToList();
             return BadRequest(new { errores });
         }

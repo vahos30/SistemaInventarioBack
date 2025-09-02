@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SistemaInventario.Domain.Entities;
 using SistemaInventario.Domain.Interfaces;
+using SistemaInventario.Application.DTOs;
 
 namespace SistemaInventario.Application.Services
 {
@@ -37,7 +38,6 @@ namespace SistemaInventario.Application.Services
             if (compra.Detalles == null || !compra.Detalles.Any())
                 throw new ArgumentException("La compra debe tener al menos un detalle.");
 
-            // Actualizar stock de productos y calcular el total
             decimal total = 0;
             foreach (var detalle in compra.Detalles)
             {
@@ -46,9 +46,11 @@ namespace SistemaInventario.Application.Services
                     throw new Exception($"Producto con ID {detalle.ProductoId} no encontrado.");
 
                 producto.CantidadStock += detalle.Cantidad;
+                producto.Activo = producto.CantidadStock > 0; // <-- Actualiza el estado Activo
                 await _productoRepository.ActualizarAsync(producto);
 
-                total += detalle.Cantidad * detalle.PrecioUnitario;
+                detalle.SubTotal = detalle.Cantidad * detalle.PrecioUnitario;
+                total += detalle.SubTotal;
             }
 
             compra.Total = total;
@@ -71,7 +73,64 @@ namespace SistemaInventario.Application.Services
         // Eliminar una compra por ID
         public async Task EliminarAsync(Guid id)
         {
+            var compra = await _compraRepository.ObtenerPorIdAsync(id);
+            if (compra != null)
+            {
+                foreach (var detalle in compra.Detalles)
+                {
+                    var producto = await _productoRepository.ObtenerPorIdsync(detalle.ProductoId);
+                    producto.CantidadStock -= detalle.Cantidad;
+                    producto.Activo = producto.CantidadStock > 0; // <-- Actualiza el estado Activo
+                    await _productoRepository.ActualizarAsync(producto);
+                }
+            }
             await _compraRepository.EliminarAsync(id);
+        }
+
+        // Anular una compra por ID
+        public async Task AnularAsync(Guid id)
+        {
+            var compra = await _compraRepository.ObtenerPorIdAsync(id);
+            if (compra == null)
+                throw new Exception("Compra no encontrada.");
+
+            // Actualiza el estado de la compra a 'Anulada'
+            compra.Estado = "Anulada";
+
+            await _compraRepository.ActualizarAsync(compra);
+        }
+
+        // Anular parcialmente una compra
+        public async Task AnularParcialAsync(CompraAnulacionParcialDto dto)
+        {
+            var compra = await _compraRepository.ObtenerPorIdAsync(dto.CompraId);
+            if (compra == null)
+                throw new Exception("Compra no encontrada.");
+
+            foreach (var detalleAnulacion in dto.Detalles)
+            {
+                var detalleCompra = compra.Detalles.FirstOrDefault(d => d.ProductoId == detalleAnulacion.ProductoId);
+                if (detalleCompra == null)
+                    throw new Exception($"Producto {detalleAnulacion.ProductoId} no encontrado en la compra.");
+
+                if (detalleAnulacion.CantidadAAnular > detalleCompra.Cantidad)
+                    throw new Exception("No se puede anular más de lo comprado.");
+
+                var producto = await _productoRepository.ObtenerPorIdsync(detalleAnulacion.ProductoId);
+                producto.CantidadStock -= detalleAnulacion.CantidadAAnular;
+                producto.Activo = producto.CantidadStock > 0; // <-- Actualiza el estado Activo
+                await _productoRepository.ActualizarAsync(producto);
+
+                detalleCompra.MotivoDevolucion = detalleAnulacion.MotivoDevolucion;
+                detalleCompra.Cantidad -= detalleAnulacion.CantidadAAnular;
+                detalleCompra.SubTotal = detalleCompra.Cantidad * detalleCompra.PrecioUnitario;
+            }
+
+            compra.Detalles = compra.Detalles.Where(d => d.Cantidad > 0).ToList();
+            compra.Total = compra.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
+            compra.Estado = "Anulada Parcial";
+
+            await _compraRepository.ActualizarAsync(compra);
         }
     }
 }
