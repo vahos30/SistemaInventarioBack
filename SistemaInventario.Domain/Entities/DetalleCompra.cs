@@ -11,7 +11,8 @@ namespace SistemaInventario.Domain.Entities
         public Producto Producto { get; set; }
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
-        public decimal SubTotal => Cantidad * PrecioUnitario;
+        public decimal SubTotal { get; set; }
+        public string? MotivoDevolucion { get; set; } // <-- NUEVO
     }
 }
 
