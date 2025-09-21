@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SistemaInventario.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SistemaInventario.Infrastructure.Persistence;
 namespace SistemaInventario.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250915203350_AgregarCamposFactusACliente")]
+    partial class AgregarCamposFactusACliente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -263,10 +266,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("RazonSocial")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -360,9 +359,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                     b.Property<Guid>("ProductoId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Subtotal")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("TipoDescuento")
                         .HasColumnType("nvarchar(max)");
 
@@ -448,17 +444,6 @@ namespace SistemaInventario.Infrastructure.Migrations
                     b.Property<string>("NumeroFactura")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Observacion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Referencia")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

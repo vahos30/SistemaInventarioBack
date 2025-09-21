@@ -12,7 +12,7 @@ namespace SistemaInventario.Domain.Entities
         public Cliente Cliente { get; set; } = null!;
         public DateTime Fecha { get; set; } = DateTime.Now;
         public List<DetalleFactura> Detalles { get; set; } = new();
-        public decimal Total => Detalles.Sum(d => d.Subtotal);
+        public decimal Total { get; set; }
 
         // NUEVOS CAMPOS
         public bool Anulada { get; set; } = false;
@@ -21,5 +21,7 @@ namespace SistemaInventario.Domain.Entities
         public Guid? NotaCreditoId { get; set; }
         public NotaCredito? NotaCredito { get; set; }
         public string FormaPago { get; set; } = string.Empty;
+        public string Observacion { get; set; } = string.Empty;
+        public string Referencia { get; set; } = string.Empty;
     }
 }

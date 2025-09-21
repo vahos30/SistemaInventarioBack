@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SistemaInventario.Domain.Entities;
 using Microsoft.OpenApi.Models;
+using SistemaInventario.Application.Feactures.Facturas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,6 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-
 
 // Registrar DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -65,6 +65,7 @@ builder.Services.AddScoped<CompraService>();
 builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(CrearReciboCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(CrearFacturaCommandHandler).Assembly);
+builder.Services.AddMediatR(typeof(CrearFacturaFactusCommandHandler).Assembly);
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -122,6 +123,10 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
+
+builder.Services.AddHttpClient<FactusAuthService>();
+builder.Services.AddHttpClient<FactusFacturaService>();
+builder.Services.AddHttpClient<CiudadService>();
 
 var app = builder.Build();
 

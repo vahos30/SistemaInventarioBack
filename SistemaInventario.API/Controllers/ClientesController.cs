@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SistemaInventario.Application.DTOs;
+using SistemaInventario.Application.Feactures.Clientes;
 using SistemaInventario.Domain.Entities;
 using SistemaInventario.Infrastructure.Persistence;
 
@@ -18,11 +20,13 @@ namespace SistemaInventario.API.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public ClientesController(AppDbContext context, IMapper mapper)
+        public ClientesController(AppDbContext context, IMapper mapper, IMediator mediator)
         {
             _context = context;
-            _mapper = mapper; 
+            _mapper = mapper;
+            _mediator = mediator;
         }
 
         // GET: api/Clientes
@@ -85,13 +89,10 @@ namespace SistemaInventario.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente([FromBody] ClienteDto clienteDto)
+        public async Task<ActionResult<ClienteDto>> PostCliente([FromBody] CrearClienteCommand command)
         {
-            var cliente = _mapper.Map<Cliente>(clienteDto);
-            _context.Clientes.Add(cliente);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCliente", new { id = cliente.Id }, cliente);
+            var clienteDto = await _mediator.Send(command);
+            return CreatedAtAction("GetCliente", new { id = clienteDto.Id }, clienteDto);
         }
 
         // DELETE: api/Clientes/5

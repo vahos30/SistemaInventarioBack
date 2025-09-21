@@ -35,5 +35,25 @@ namespace SistemaInventario.Domain.Entities
 
         // Navegación inversa
         public List<Recibo> Recibos { get; set; } = new(); // ✅ Nueva propiedad
+
+        // Código de la ciudad
+        public string CodigoCiudad { get; set; } = string.Empty; // Ej: "05030"
+
+        // Nombre de la ciudad
+        public string Ciudad { get; set; } = string.Empty;       // Ej: "Amaga"
+
+        // Nombre del departamento
+        public string Departamento { get; set; } = string.Empty; // Ej: "Antioquia"
+
+        // Nuevo campo para el id de la ciudad de Factus
+        public int CiudadId { get; set; }
+
+        // Nuevos campos para Factus
+        public int IdTipoOrganizacion { get; set; }         // legal_organization_id
+        public int IdTributo { get; set; }                  // tribute_id
+        public int IdTipoDocumentoIdentidad { get; set; }   // identification_document_id
+
+        // razón social del cliente
+        public string RazonSocial { get; set; } = string.Empty;
     }
 }
