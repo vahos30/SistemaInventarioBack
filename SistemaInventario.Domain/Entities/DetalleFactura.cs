@@ -6,7 +6,7 @@ namespace SistemaInventario.Domain.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid FacturaId { get; set; }
-        public Factura Factura { get; set; } = null!;
+        public Factura? Factura { get; set; }
         public Guid ProductoId { get; set; }
         public Producto Producto { get; set; } = null!;
         public int Cantidad { get; set; }
@@ -14,20 +14,6 @@ namespace SistemaInventario.Domain.Entities
         public string? TipoDescuento { get; set; }
         public decimal? ValorDescuento { get; set; }
         public decimal ValorIva { get; set; }
-        public decimal Subtotal
-        {
-            get
-            {
-                decimal descuento = 0;
-                if (TipoDescuento == "Porcentaje" && ValorDescuento.HasValue)
-                    descuento = PrecioUnitario * (ValorDescuento.Value / 100m);
-                else if (TipoDescuento == "ValorAbsoluto" && ValorDescuento.HasValue)
-                    descuento = ValorDescuento.Value;
-
-                decimal precioFinal = PrecioUnitario - descuento;
-                if (precioFinal < 0) precioFinal = 0;
-                return Cantidad * precioFinal;
-            }
-        }
+        public decimal Subtotal { get; set; }
     }
 }

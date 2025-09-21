@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MediatR;
 using SistemaInventario.Application.DTOs;
-using SistemaInventario.Domain.Entities;
 
 namespace SistemaInventario.Application.Feactures.Clientes
 {
@@ -21,5 +16,13 @@ namespace SistemaInventario.Application.Feactures.Clientes
         public string Direccion { get; set; } = string.Empty;
         public string Telefono { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string CodigoCiudad { get; set; } = string.Empty;
+        public int CiudadId { get; set; }
+
+        // Nuevos campos para Factus
+        public int IdTipoOrganizacion { get; set; }
+        public int IdTributo { get; set; }
+        public int IdTipoDocumentoIdentidad { get; set; }
+        public string RazonSocial { get; set; } = string.Empty;
     }
 }

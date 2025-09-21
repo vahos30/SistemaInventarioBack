@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -13,19 +11,29 @@ namespace SistemaInventario.Application.Feactures.Clientes
 {
     /// <summary>
     /// Handler que procesa el comando para crear un nuevo cliente.
+    /// </summary>
     public class CrearClienteCommandHandler : IRequestHandler<CrearClienteCommand, ClienteDto>
     {
         private readonly IClienteRepository _clienteRepository;
         private readonly IMapper _mapper;
+        private readonly CiudadService _ciudadService;
 
-        public CrearClienteCommandHandler(IClienteRepository clienteRepository, IMapper mapper)
+        public CrearClienteCommandHandler(IClienteRepository clienteRepository, IMapper mapper, CiudadService ciudadService)
         {
             _clienteRepository = clienteRepository;
             _mapper = mapper;
+            _ciudadService = ciudadService;
         }
 
         public async Task<ClienteDto> Handle(CrearClienteCommand request, CancellationToken cancellationToken)
         {
+            // Consultar la ciudad por código
+            var ciudades = await _ciudadService.ObtenerCiudadesAsync();
+            var ciudad = ciudades.FirstOrDefault(c => c.id == request.CiudadId);
+
+            if (ciudad == null)
+                throw new Exception("Ciudad no encontrada");
+
             var cliente = new Cliente
             {
                 Nombre = request.Nombre,
@@ -34,7 +42,17 @@ namespace SistemaInventario.Application.Feactures.Clientes
                 NumeroDocumento = request.NumeroDocumento,
                 Telefono = request.Telefono,
                 Direccion = request.Direccion,
-                Email = request.Email
+                Email = request.Email,
+                CodigoCiudad = ciudad.code,
+                Ciudad = ciudad.name,
+                Departamento = ciudad.department,
+                CiudadId = ciudad.id,
+                IdTipoOrganizacion = request.IdTipoOrganizacion,
+                IdTributo = request.IdTributo,
+                IdTipoDocumentoIdentidad = request.IdTipoDocumentoIdentidad,
+                RazonSocial = request.RazonSocial,
+                    
+                
             };
 
             await _clienteRepository.AgregarAsync(cliente);
