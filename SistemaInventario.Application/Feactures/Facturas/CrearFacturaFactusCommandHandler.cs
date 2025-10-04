@@ -116,8 +116,8 @@ namespace SistemaInventario.Application.Feactures.Facturas
                 {
                     ProductoId = d.ProductoId,
                     Cantidad = decimal.TryParse(factusResponse.data.items[i].quantity, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var cantidadDecimal)
-        ? (int)cantidadDecimal
-        : 0,
+    ? (int)cantidadDecimal
+    : 0,
                     PrecioUnitario = d.PrecioUnitario,
                     TipoDescuento = d.TipoDescuento,
                     ValorDescuento = d.ValorDescuento,
