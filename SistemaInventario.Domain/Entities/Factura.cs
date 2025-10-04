@@ -21,6 +21,7 @@ namespace SistemaInventario.Domain.Entities
         public Guid? NotaCreditoId { get; set; }
         public NotaCredito? NotaCredito { get; set; }
         public string FormaPago { get; set; } = string.Empty;
+        public string MetodoPago { get; set; } = string.Empty; // <-- NUEVO
         public string Observacion { get; set; } = string.Empty;
         public string Referencia { get; set; } = string.Empty;
     }

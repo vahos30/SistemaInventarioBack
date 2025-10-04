@@ -108,21 +108,23 @@ namespace SistemaInventario.Application.Feactures.Facturas
                 ClienteId = cliente.Id,
                 Fecha = DateTime.UtcNow,
                 FormaPago = request.FormaPago,
+                MetodoPago = request.MetodoPago, // <-- NUEVO
                 Observacion = request.Observacion,
                 Referencia = factusResponse.data.bill.reference_code,
                 Total = decimal.Parse(factusResponse.data.bill.total),
                 Detalles = detallesCompletos.Select((d, i) => new DetalleFactura
                 {
                     ProductoId = d.ProductoId,
-                    Cantidad = d.Cantidad,
+                    Cantidad = decimal.TryParse(factusResponse.data.items[i].quantity, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var cantidadDecimal)
+        ? (int)cantidadDecimal
+        : 0,
                     PrecioUnitario = d.PrecioUnitario,
                     TipoDescuento = d.TipoDescuento,
                     ValorDescuento = d.ValorDescuento,
-                    // Aquí asignas el IVA que viene en la respuesta de Factus
-                    ValorIva = factusResponse.data.items[i].tax_amount != null
-                        ? decimal.Parse(factusResponse.data.items[i].tax_amount.ToString())
+                    ValorIva = !string.IsNullOrEmpty(factusResponse.data.items[i].tax_amount)
+                        ? decimal.Parse(factusResponse.data.items[i].tax_amount, System.Globalization.CultureInfo.InvariantCulture)
                         : 0,
-                    Subtotal = d.PrecioUnitario * d.Cantidad
+                    Subtotal = d.PrecioUnitario * (decimal.TryParse(factusResponse.data.items[i].quantity, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var c) ? (int)c : 0)
                 }).ToList()
             };
 

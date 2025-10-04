@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using SistemaInventario.Application.Feactures.Facturas;
+using SistemaInventario.Application.Services; 
 
 
 [ApiController]
@@ -8,10 +9,12 @@ using SistemaInventario.Application.Feactures.Facturas;
 public class FactusController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly FactusFacturaService _factusFacturaService;
 
-    public FactusController(IMediator mediator)
+    public FactusController(IMediator mediator, FactusFacturaService factusFacturaService)
     {
         _mediator = mediator;
+        _factusFacturaService = factusFacturaService;
     }
 
     [HttpPost("crear-factura-factus")]
@@ -19,5 +22,13 @@ public class FactusController : ControllerBase
     {
         var result = await _mediator.Send(command);
         return Ok(result);
+    }
+
+    [HttpGet("descargar-factura-pdf/{numeroFactura}")]
+    public async Task<IActionResult> DescargarFacturaPdf(string numeroFactura)
+    {
+        var (fileName, pdfBase64) = await _factusFacturaService.DescargarFacturaPdfAsync(numeroFactura);
+        var pdfBytes = Convert.FromBase64String(pdfBase64);
+        return File(pdfBytes, "application/pdf", $"{fileName}.pdf");
     }
 }
