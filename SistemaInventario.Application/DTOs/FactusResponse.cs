@@ -33,7 +33,7 @@ namespace SistemaInventario.Application.DTOs
     public class FactusItemResponse
     {
         public string name { get; set; }
-        public int quantity { get; set; }
+        public string quantity { get; set; }
         public string price { get; set; }
         public string tax_rate { get; set; }
         public string tax_amount { get; set; } // Este es el campo IVA que necesitas
