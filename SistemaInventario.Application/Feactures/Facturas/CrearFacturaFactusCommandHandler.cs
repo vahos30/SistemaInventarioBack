@@ -72,11 +72,11 @@ namespace SistemaInventario.Application.Feactures.Facturas
             // 5. Establecimiento fijo
             var establecimientoFijo = new FactusEstablishment
             {
-                name = "AYM ELECTRODOMESTICOS SAS",
-                address = "CL 50 48 06",
-                phone_number = "(57) 3007510012",
-                email = "aymelectrodomesticos.sas@gmail.com",
-                municipality_id = "15" // Amagá - Antioquia (DANE)
+                name = "TECNOFRIO DISTRIBUCIONES S.A.S.",
+                address = "CARRERA 99 65 265",
+                phone_number = "(57) 3113740874",
+                email = "administracion@tecnofriodistribuciones.com.co",
+                municipality_id = "80" // Medellin
             };
 
             // 6. Mapear y enviar a Factus
@@ -129,6 +129,20 @@ namespace SistemaInventario.Application.Feactures.Facturas
             };
 
             await _facturaRepository.AgregarAsync(factura);
+
+            // Descontar inventario de productos
+            foreach (var detalle in factura.Detalles)
+            {
+                var producto = await _productoRepository.ObtenerPorIdsync(detalle.ProductoId);
+                if (producto == null)
+                    throw new Exception($"Producto con ID {detalle.ProductoId} no encontrado.");
+
+                if (producto.CantidadStock < detalle.Cantidad)
+                    throw new Exception($"Stock insuficiente para el producto {producto.Nombre}.");
+
+                producto.CantidadStock -= detalle.Cantidad;
+                await _productoRepository.ActualizarAsync(producto);
+            }
 
             // 3. Retorna la respuesta original de Factus
             return result;
