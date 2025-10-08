@@ -71,4 +71,30 @@ public class FactusFacturaService
 
         return (fileName, pdfBase64);
     }
+
+    public async Task<string> CrearNotaCreditoAsync(object notaCreditoRequest)
+    {
+        var token = await _authService.GetAccessTokenAsync();
+
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{_config["Factus:UrlApi"]}/v1/credit-notes/validate");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var json = JsonSerializer.Serialize(notaCreditoRequest, new JsonSerializerOptions { WriteIndented = true });
+        Console.WriteLine("JSON FINAL ENVIADO A FACTUS (Nota Crédito):");
+        Console.WriteLine(json);
+        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.SendAsync(request);
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Error Factus Nota Crédito:");
+            Console.WriteLine(responseBody);
+            throw new HttpRequestException($"Error Factus: {response.StatusCode} - {responseBody}");
+        }
+
+        return responseBody;
+    }
 }
