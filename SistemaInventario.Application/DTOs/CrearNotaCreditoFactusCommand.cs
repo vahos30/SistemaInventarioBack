@@ -6,8 +6,6 @@ public class CrearNotaCreditoFactusCommand : IRequest<string>
 {
     public int CorrectionConceptCode { get; set; }
     public int CustomizationId { get; set; }
-    public int BillId { get; set; }
-    public string ReferenceCode { get; set; }
     public string PaymentMethodCode { get; set; }
     public string Observation { get; set; }
     public Guid FacturaId { get; set; } // Id de la factura interna a referenciar

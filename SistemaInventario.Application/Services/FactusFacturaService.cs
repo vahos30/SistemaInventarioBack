@@ -97,4 +97,31 @@ public class FactusFacturaService
 
         return responseBody;
     }
+
+    public async Task<(string FileName, string PdfBase64)> DescargarNotaCreditoPdfAsync(string numeroNotaCredito)
+    {
+        var token = await _authService.GetAccessTokenAsync();
+
+        var url = $"{_config["Factus:UrlApi"]}/v1/credit-notes/download-pdf/{numeroNotaCredito}";
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await _httpClient.SendAsync(request);
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Error al descargar PDF de Nota Crédito Factus:");
+            Console.WriteLine(responseBody);
+            throw new HttpRequestException($"Error Factus: {response.StatusCode} - {responseBody}");
+        }
+
+        using var doc = JsonDocument.Parse(responseBody);
+        var data = doc.RootElement.GetProperty("data");
+        var fileName = data.GetProperty("file_name").GetString();
+        var pdfBase64 = data.GetProperty("pdf_base_64_encoded").GetString();
+
+        return (fileName, pdfBase64);
+    }
 }
