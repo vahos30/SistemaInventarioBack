@@ -88,7 +88,8 @@ namespace SistemaInventario.Application.Feactures.Facturas
                 fechaVencimiento, // Solo se envía si es crédito
                 request.FormaPago,
                 request.MetodoPago,
-                establecimientoFijo
+                establecimientoFijo,
+                true // <-- Aquí decides si enviar el email o no
             );
 
             // Imprimir el JSON generado para depuración
@@ -112,6 +113,7 @@ namespace SistemaInventario.Application.Feactures.Facturas
                 Observacion = request.Observacion,
                 Referencia = factusResponse.data.bill.reference_code,
                 Total = decimal.Parse(factusResponse.data.bill.total),
+                FactusBillId = factusResponse.data.bill.id,
                 Detalles = detallesCompletos.Select((d, i) => new DetalleFactura
                 {
                     ProductoId = d.ProductoId,

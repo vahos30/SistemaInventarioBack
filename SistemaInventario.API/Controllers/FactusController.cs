@@ -31,4 +31,19 @@ public class FactusController : ControllerBase
         var pdfBytes = Convert.FromBase64String(pdfBase64);
         return File(pdfBytes, "application/pdf", $"{fileName}.pdf");
     }
+
+    [HttpPost("crear-nota-credito-factus")]
+    public async Task<IActionResult> CrearNotaCreditoFactus([FromBody] CrearNotaCreditoFactusCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return Ok(result);
+    }
+
+    [HttpGet("descargar-nota-credito-pdf/{numeroNotaCredito}")]
+    public async Task<IActionResult> DescargarNotaCreditoPdf(string numeroNotaCredito)
+    {
+        var (fileName, pdfBase64) = await _factusFacturaService.DescargarNotaCreditoPdfAsync(numeroNotaCredito);
+        var pdfBytes = Convert.FromBase64String(pdfBase64);
+        return File(pdfBytes, "application/pdf", $"{fileName}.pdf");
+    }
 }

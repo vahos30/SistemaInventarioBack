@@ -71,7 +71,9 @@ namespace SistemaInventario.Application.Mappers
             string fechaVencimiento,
             string formaPago,
             string metodoPago,
-            FactusEstablishment establecimiento)
+            FactusEstablishment establecimiento,
+            bool sendEmail // <-- Nuevo parámetro
+        )
         {
             return new FactusFacturaRequest
             {
@@ -82,10 +84,7 @@ namespace SistemaInventario.Application.Mappers
                 payment_due_date = fechaVencimiento,
                 payment_method_code = metodoPago,
                 operation_type = 10,
-                send_email = true,
-                // ❌ ELIMINAR campos opcionales problemáticos
-                // order_reference = null,
-                // billing_period = null,
+                send_email = sendEmail, // <-- Usar el parámetro
                 establishment = establecimiento,
                 customer = MapClienteToFactusCustomer(cliente),
                 items = MapDetallesToFactusItems(detalles)
