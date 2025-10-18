@@ -107,7 +107,7 @@ namespace SistemaInventario.Application.Feactures.Facturas
             {
                 NumeroFactura = factusResponse.data.bill.number,
                 ClienteId = cliente.Id,
-                Fecha = DateTime.UtcNow,
+                Fecha = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time")),
                 FormaPago = request.FormaPago,
                 MetodoPago = request.MetodoPago, // <-- NUEVO
                 Observacion = request.Observacion,
