@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins("https://sistema-ventas.netlify.app",
-            "https://sistemainventario-cpg5hbcpdacqaubk.centralus-01.azurewebsites.net")
+            "http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -66,6 +66,7 @@ builder.Services.AddMediatR(typeof(CrearClienteCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(CrearReciboCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(CrearFacturaCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(CrearFacturaFactusCommandHandler).Assembly);
+
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -191,6 +192,7 @@ namespace Converters
         }
     }
 }
+
 
 
 
