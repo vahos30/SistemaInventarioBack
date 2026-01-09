@@ -2,7 +2,7 @@ name: jvc-tecnofrio-api
 
 services:
   jvc-tecnofrio-api:
-    image: ./Dockerfile
+    build: .
     container_name: jvc-tecnofrio-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
