@@ -39,7 +39,7 @@ public class CrearNotaCreditoFactusCommandHandler : IRequestHandler<CrearNotaCre
         // 2. Mapear los datos de la factura a la estructura de la nota crédito
         var notaCreditoRequest = new
         {
-            numbering_range_id = 756,
+            numbering_range_id = 735,
             correction_concept_code = request.CorrectionConceptCode,
             customization_id = request.CustomizationId,
             bill_id = factura.FactusBillId,
