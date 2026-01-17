@@ -17,13 +17,13 @@ public class CrearNotaCreditoFactusCommandHandler : IRequestHandler<CrearNotaCre
         IFacturaRepository facturaRepository,
         FactusFacturaService factusFacturaService,
         INotaCreditoRepository notaCreditoRepository,
-        IProductoRepository productoRepository // <-- Inyéctala aquí
+        IProductoRepository productoRepository // <-- Inyï¿½ctala aquï¿½
     )
     {
         _facturaRepository = facturaRepository;
         _factusFacturaService = factusFacturaService;
         _notaCreditoRepository = notaCreditoRepository;
-        _productoRepository = productoRepository; // <-- Asigna aquí
+        _productoRepository = productoRepository; // <-- Asigna aquï¿½
     }
 
     public async Task<string> Handle(CrearNotaCreditoFactusCommand request, CancellationToken cancellationToken)
@@ -36,10 +36,10 @@ public class CrearNotaCreditoFactusCommandHandler : IRequestHandler<CrearNotaCre
         // Generar la referencia antes de usarla
         var referencia = $"NC-{DateTime.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 8)}";
 
-        // 2. Mapear los datos de la factura a la estructura de la nota crédito
+        // 2. Mapear los datos de la factura a la estructura de la nota crï¿½dito
         var notaCreditoRequest = new
         {
-            numbering_range_id = 735,
+            numbering_range_id = 756, //Rango de numeracion IMPORTANTE CAMBIAR
             correction_concept_code = request.CorrectionConceptCode,
             customization_id = request.CustomizationId,
             bill_id = factura.FactusBillId,
