@@ -1,9 +1,9 @@
-name: jvc-Yireh-pruebas-api
+name: jvc-yireh-pruebas-api
 
 services:
-  jvc-Yireh-pruebas-api:
+  jvc-yireh-pruebas-api:
     build: .
-    container_name: jvc-Yireh-pruebas-api
+    container_name: jvc-yireh-pruebas-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=mssql-db;Database=Yireh-pruebas;User Id=sa;Password=F90XAg3aiF£7;TrustServerCertificate=True;
