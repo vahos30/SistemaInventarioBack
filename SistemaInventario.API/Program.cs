@@ -35,11 +35,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-            "https://sistema-ventas.netlify.app",
             "http://localhost:3000",
-            "http://72.61.70.114:3000",
             "http://72.61.70.114:3001",
-            "https://tecnofrio.jvcsoluciones.cloud")
+            "https://yireh.jvcsoluciones.cloud")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
