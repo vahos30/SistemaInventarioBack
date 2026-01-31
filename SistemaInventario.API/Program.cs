@@ -39,8 +39,7 @@ builder.Services.AddCors(options =>
             "http://72.61.70.114:3001",
             "https://yireh.jvcsoluciones.cloud")
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
 
@@ -184,11 +183,9 @@ using (var scope = app.Services.CreateScope())
 }
 // --- FIN DE BLOQUE PROTEGIDO ---
 
-if (app.Environment.IsDevelopment())
-{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
