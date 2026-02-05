@@ -69,7 +69,7 @@ namespace SistemaInventario.Application.Feactures.Facturas
             if (request.FormaPago == "2")
                 fechaVencimiento = DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd");
 
-            // 5. Establecimiento fijo
+            // 5. Establecimiento fijo o cambiar por el establecimiento del usuario si es necesario.
             var establecimientoFijo = new FactusEstablishment
             {
                 name = "TECNOFRIO DISTRIBUCIONES S.A.S.",
