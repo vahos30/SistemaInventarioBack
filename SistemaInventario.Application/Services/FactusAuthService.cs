@@ -15,7 +15,7 @@ public class FactusAuthService
         _config = config;
     }
 
-    public async Task<string> GetAccessTokenAsync()
+    public virtual async Task<string> GetAccessTokenAsync()
     {
         var urlApi = _config["Factus:UrlApi"]; // Debe ser "https://api-sandbox.factus.com.co"
         var clientId = _config["Factus:ClientId"];

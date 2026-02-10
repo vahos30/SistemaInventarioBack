@@ -19,10 +19,10 @@ public class CiudadService
         _authService = authService;
     }
 
-    public async Task<List<CiudadDto>> ObtenerCiudadesAsync(string name = "")
+    public virtual async Task<List<CiudadDto>> ObtenerCiudadesAsync()
     {
         var token = await _authService.GetAccessTokenAsync();
-        var url = $"{_config["Factus:UrlApi"]}/v1/municipalities?name={name}";
+        var url = $"{_config["Factus:UrlApi"]}/v1/municipalities";
         var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace SistemaInventario.Test.Infrastructure
+namespace SistemaInventario.Test.Infrastructure.Repositories
 {
     [TestClass]
     public class UnitTestProductoRepositoryProxy

@@ -166,7 +166,7 @@ using (var scope = app.Services.CreateScope())
         if (adminUser == null)
         {
             adminUser = new Usuario { UserName = "admin", Email = "admin@correo.com" };
-            var result = await userManager.CreateAsync(adminUser, "TuContraseñaSegura123!");
+            var result = await userManager.CreateAsync(adminUser, "Admin123!");
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(adminUser, "Administrador");

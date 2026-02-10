@@ -10,7 +10,7 @@ using SistemaInventario.Application.Feactures.Reportes;
 using SistemaInventario.Domain.Entities;
 using SistemaInventario.Domain.Interfaces;
 
-namespace SistemaInventario.Test.Application
+namespace SistemaInventario.Test.Application.Feactures.Reportes
 {
     [TestClass]
     public class UnitTestObtenerInventarioHandler

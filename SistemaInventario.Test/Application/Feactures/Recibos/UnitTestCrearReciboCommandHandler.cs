@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SistemaInventario.Test.Application
+namespace SistemaInventario.Test.Application.Feactures.Recibos
 {
     [TestClass]
     public class UnitTestCrearReciboCommandHandler

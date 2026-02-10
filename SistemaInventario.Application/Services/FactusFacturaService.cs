@@ -72,7 +72,7 @@ public class FactusFacturaService
         return (fileName, pdfBase64);
     }
 
-    public async Task<string> CrearNotaCreditoAsync(object notaCreditoRequest)
+    public virtual async Task<string> CrearNotaCreditoAsync(object notaCreditoRequest)
     {
         var token = await _authService.GetAccessTokenAsync();
 

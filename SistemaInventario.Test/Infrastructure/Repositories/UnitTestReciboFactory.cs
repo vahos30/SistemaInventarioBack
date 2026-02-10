@@ -4,7 +4,7 @@ using SistemaInventario.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 
-namespace SistemaInventario.Test.Infrastructure
+namespace SistemaInventario.Test.Infrastructure.Repositories
 {
     [TestClass]
     public class UnitTestReciboFactory

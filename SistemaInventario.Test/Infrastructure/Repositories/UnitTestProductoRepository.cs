@@ -9,7 +9,7 @@ using SistemaInventario.Domain.Entities;
 using SistemaInventario.Infrastructure.Persistence;
 using SistemaInventario.Infrastructure.Repositories;
 
-namespace SistemaInventario.Test.Infrastructure
+namespace SistemaInventario.Test.Infrastructure.Repositories
 {
     [TestClass]
     public class UnitTestProductoRepository

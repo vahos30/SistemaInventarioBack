@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SistemaInventario.Test.Infrastructure
+namespace SistemaInventario.Test.Infrastructure.Repositories
 {
     [TestClass]
     public class UnitTestReciboRepository
