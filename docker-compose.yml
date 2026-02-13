@@ -7,6 +7,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=mssql-db;Database=Yireh-pruebas;User Id=sa;Password=F90XAg3aiF£7;TrustServerCertificate=True;
+      - Factus__UrlApi=https://api-sandbox.factus.com.co
+      - Factus__ClientId=a00d4781-85dd-4a4c-8c6d-988c0162b743
+      - Factus__ClientSecret=LefWupGqnSSQpyPLIO0J7ZQnWhRfS4MnGJGKNL4F
+      - Factus__Email=brahianmonc2@gmail.com
+      - Factus__Password=1007379101
     ports:
       - "5001:8080"
     restart: always
