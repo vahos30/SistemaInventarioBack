@@ -364,4 +364,4 @@ FodyWeavers.xsd
 /SistemaInventario.Infrastructure/Repositories/ClienteRepository.cs
 
 # SonarQube
-.sonarquebe/
+.sonarqube/
