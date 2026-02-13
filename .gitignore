@@ -362,3 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /SistemaInventario.Infrastructure/Repositories/ClienteRepository.cs
+
+# SonarQube
+.sonarquebe/
