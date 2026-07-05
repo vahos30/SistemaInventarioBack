@@ -24,7 +24,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.IdentityModel.Protocols" Version="8.0.1" />
 		<PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.0.1" />
-		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.1" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
 		<PackageReference Include="SonarAnalyzer.CSharp" Version="10.19.0.132793">
 		  <PrivateAssets>all</PrivateAssets>
