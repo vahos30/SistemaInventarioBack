@@ -1,19 +1,19 @@
-name: jvc-yireh-pruebas-api
+name: jvc-electroestilo-api
 
 services:
-  jvc-yireh-pruebas-api:
+  jvc-electroestilo-api:
     build: .
-    container_name: jvc-yireh-pruebas-api
+    container_name: jvc-electroestilo-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=mssql-db;Database=Yireh-pruebas;User Id=sa;Password=F90XAg3aiF£7;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=mssql-db;Database=electro-estilo;User Id=sa;Password=F90XAg3aiF£7;TrustServerCertificate=True;
       - Factus__UrlApi=https://api-sandbox.factus.com.co
-      - Factus__ClientId=a00d4781-85dd-4a4c-8c6d-988c0162b743
-      - Factus__ClientSecret=LefWupGqnSSQpyPLIO0J7ZQnWhRfS4MnGJGKNL4F
-      - Factus__Email=brahianmonc2@gmail.com
-      - Factus__Password=1007379101
+      - Factus__ClientId=9fc8e8e1-3241-4fa1-845c-bce91aa6784f
+      - Factus__ClientSecret=BeDJPX6brLjsBAKit07E0ZccKvNqEd2xlPir2JKu
+      - Factus__Email=sandbox@factus.com.co
+      - Factus__Password=sandbox2024%
     ports:
-      - "5001:8080"
+      - "5002:8080"
     restart: always
     networks:
       - mssql_network
