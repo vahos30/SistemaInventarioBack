@@ -41,7 +41,7 @@ namespace SistemaInventario.Application.Feactures.Facturas
             // 2. Mapear los datos de la factura a la estructura de la nota crádito
             var notaCreditoRequest = new
             {
-                numbering_range_id = 756, //Rango de numeracion IMPORTANTE CAMBIAR
+                numbering_range_id = 9, //Rango de numeracion IMPORTANTE CAMBIAR
                 correction_concept_code = request.CorrectionConceptCode,
                 customization_id = request.CustomizationId,
                 bill_id = factura.FactusBillId,
@@ -51,10 +51,10 @@ namespace SistemaInventario.Application.Feactures.Facturas
                 observation = request.Observation,
                 establishment = new
                 {
-                    name = "TECNOFRIO DISTRIBUCIONES S.A.S.",
+                    name = "ELECTRO ESTILO",
                     address = "CARRERA 99 65 265",
-                    phone_number = "(57) 3113740874",
-                    email = "administracion@tecnofriodistribuciones.com.co",
+                    phone_number = "(57) 321 5654791",
+                    email = "gerenciacomercial@electroestilo.com",
                     municipality_id = "80"
                 },
                 customer = FactusMapper.MapClienteToFactusCustomer(factura.Cliente),

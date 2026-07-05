@@ -77,7 +77,7 @@ namespace SistemaInventario.Application.Mappers
         {
             return new FactusFacturaRequest
             {
-                numbering_range_id = 755,
+                numbering_range_id = 8,// Rango de numeracion IMPORTANTE CAMBIAR
                 reference_code = referencia,
                 observation = observacion ?? "",
                 payment_form = formaPago,
