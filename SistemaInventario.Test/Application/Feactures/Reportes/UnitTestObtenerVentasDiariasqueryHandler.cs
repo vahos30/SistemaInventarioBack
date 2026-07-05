@@ -30,6 +30,7 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
 
             // Configuración completa de AutoMapper usando DI en la prueba
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddLogging();
             services.AddAutoMapper(cfg =>
             {
                 // Mapeo principal del Recibo

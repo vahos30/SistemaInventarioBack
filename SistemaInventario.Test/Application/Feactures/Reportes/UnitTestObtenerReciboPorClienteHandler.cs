@@ -29,6 +29,7 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
             _reciboRepositoryMock = new Mock<IReciboRepository>();
             //configuramos AutoMapper usando el MappingProfile de la aplicacion via DI
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddLogging();
             services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
             var provider = services.BuildServiceProvider();
             _mapper = provider.GetRequiredService<AutoMapper.IMapper>();

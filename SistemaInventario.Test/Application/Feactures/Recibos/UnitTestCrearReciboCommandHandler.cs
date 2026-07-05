@@ -34,6 +34,7 @@ namespace SistemaInventario.Test.Application.Feactures.Recibos
 
             // Configurar AutoMapper via DI
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddLogging();
             services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
             var provider = services.BuildServiceProvider();
             var mapper = provider.GetRequiredService<AutoMapper.IMapper>();

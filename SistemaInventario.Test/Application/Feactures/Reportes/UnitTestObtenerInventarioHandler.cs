@@ -26,6 +26,7 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
             _productoRepositoryMock = new Mock<IProductoRepository>();
 
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddLogging();
             services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<Producto, ProductoDto>()

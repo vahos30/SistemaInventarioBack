@@ -29,6 +29,7 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
             _facturaRepositoryMock = new Mock<IFacturaRepository>();
 
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddLogging();
             services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<Recibo, ReciboDto>()
