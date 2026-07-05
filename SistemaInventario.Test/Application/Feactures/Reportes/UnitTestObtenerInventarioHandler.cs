@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SistemaInventario.Application.DTOs;
@@ -24,7 +25,8 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
         {
             _productoRepositoryMock = new Mock<IProductoRepository>();
 
-            var config = new MapperConfiguration(cfg =>
+            var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<Producto, ProductoDto>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -33,8 +35,8 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
                     .ForMember(dest => dest.Precio, opt => opt.MapFrom(src => src.Precio))
                     .ForMember(dest => dest.Activo, opt => opt.MapFrom(src => src.Activo));
             });
-
-            _mapper = config.CreateMapper();
+            var provider = services.BuildServiceProvider();
+            _mapper = provider.GetRequiredService<AutoMapper.IMapper>();
             _handler = new ObtenerInventarioHandler(_productoRepositoryMock.Object, _mapper);
         }
 

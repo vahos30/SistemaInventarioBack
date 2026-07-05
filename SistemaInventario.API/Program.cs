@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SistemaInventario.Domain.Entities;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 using SistemaInventario.Application.Feactures.Facturas;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,7 +72,7 @@ builder.Services.AddMediatR(typeof(CrearFacturaFactusCommandHandler).Assembly);
 
 
 // AutoMapper
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

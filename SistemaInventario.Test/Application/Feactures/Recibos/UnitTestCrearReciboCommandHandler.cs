@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -31,9 +32,11 @@ namespace SistemaInventario.Test.Application.Feactures.Recibos
 
             _context = new AppDbContext(options);
 
-            // Configurar AutoMapper
-            var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
-            var mapper = config.CreateMapper();
+            // Configurar AutoMapper via DI
+            var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+            var provider = services.BuildServiceProvider();
+            var mapper = provider.GetRequiredService<AutoMapper.IMapper>();
 
             // Inicializar handler con repositorios reales
             _handler = new CrearReciboCommandHandler(

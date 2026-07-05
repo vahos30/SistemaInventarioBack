@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SistemaInventario.Application.Feactures.Reportes;
@@ -27,7 +28,8 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
             _reciboRepositoryMock = new Mock<IReciboRepository>();
             _facturaRepositoryMock = new Mock<IFacturaRepository>();
 
-            var config = new MapperConfiguration(cfg =>
+            var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<Recibo, ReciboDto>()
                    .ForMember(dest => dest.Total, opt => opt.MapFrom(src =>
@@ -37,8 +39,8 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
                        src.Producto.Id));
                 // Si tienes mapeo para Factura y FacturaDto, agrégalo aquí
             });
-
-            _mapper = config.CreateMapper();
+            var provider = services.BuildServiceProvider();
+            _mapper = provider.GetRequiredService<AutoMapper.IMapper>();
             _handler = new ObtenerVentasPorFechasHandler(_reciboRepositoryMock.Object, _facturaRepositoryMock.Object, _mapper);
         }
 

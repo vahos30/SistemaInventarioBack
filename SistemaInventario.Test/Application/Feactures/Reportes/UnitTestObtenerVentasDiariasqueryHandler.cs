@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SistemaInventario.Application.Feactures.Reportes;
@@ -27,8 +28,9 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
             _reciboRepositoryMock = new Mock<IReciboRepository>();
             _facturaRepositoryMock = new Mock<IFacturaRepository>();
 
-            // Configuración completa de AutoMapper
-            var config = new MapperConfiguration(cfg =>
+            // Configuración completa de AutoMapper usando DI en la prueba
+            var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddAutoMapper(cfg =>
             {
                 // Mapeo principal del Recibo
                 cfg.CreateMap<Recibo, ReciboDto>()
@@ -48,8 +50,8 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
                     .ForMember(dest => dest.ProductoId, opt => opt.MapFrom(src =>
                         src.Producto.Id));
             });
-
-            _mapper = config.CreateMapper();
+            var provider = services.BuildServiceProvider();
+            _mapper = provider.GetRequiredService<AutoMapper.IMapper>();
             _handler = new ObtenerVentasDiariasHandler(_reciboRepositoryMock.Object, _facturaRepositoryMock.Object, _mapper);
         }
 

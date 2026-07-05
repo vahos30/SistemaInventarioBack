@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SistemaInventario.Application.Feactures.Recibos;
@@ -26,12 +27,11 @@ namespace SistemaInventario.Test.Application.Feactures.Reportes
         {
             //configuramos el mock para IReciboRepository
             _reciboRepositoryMock = new Mock<IReciboRepository>();
-            //configuramos AutoMapper usando el MappingProfile de la aplicacion
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<MappingProfile>();
-            });
-            _mapper = config.CreateMapper();
+            //configuramos AutoMapper usando el MappingProfile de la aplicacion via DI
+            var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+            var provider = services.BuildServiceProvider();
+            _mapper = provider.GetRequiredService<AutoMapper.IMapper>();
             //creamos la instancia del handler inyectandq el mock y el mapper
             _handler = new ObtenerRecibosPorClienteHandler(_reciboRepositoryMock.Object, _mapper);
         }
