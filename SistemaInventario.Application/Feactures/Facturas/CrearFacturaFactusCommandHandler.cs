@@ -72,10 +72,10 @@ namespace SistemaInventario.Application.Feactures.Facturas
             // 5. Establecimiento fijo o cambiar por el establecimiento del usuario si es necesario.
             var establecimientoFijo = new FactusEstablishment
             {
-                name = "TECNOFRIO DISTRIBUCIONES S.A.S.",
+                name = "ELECTRO ESTILO",
                 address = "CARRERA 99 65 265",
-                phone_number = "(57) 3113740874",
-                email = "administracion@tecnofriodistribuciones.com.co",
+                phone_number = "(57) 321 5654791",
+                email = "gerenciacomercial@electroestilo.com.co",
                 municipality_id = "80" // Medellin
             };
 
