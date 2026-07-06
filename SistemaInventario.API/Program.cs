@@ -38,7 +38,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "http://localhost:3000",
             "http://72.61.70.114:3002",
-            "https://yireh.jvcsoluciones.cloud")
+            "https://electroestilo.jvcsoluciones.cloud")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
